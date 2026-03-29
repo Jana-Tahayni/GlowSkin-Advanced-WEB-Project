@@ -1,0 +1,159 @@
+.upload-zone {
+  background: linear-gradient(145deg, rgba(255,252,249,0.95) 0%, rgba(254,240,234,0.9) 100%);
+  border: 2px dashed #f5c9b3;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+  border-color: #f0a090;
+  background: linear-gradient(145deg, rgba(254,240,234,0.98) 0%, rgba(252,228,214,0.95) 100%);
+  transform: translateY(-2px);
+}
+
+.upload-zone.has-image {
+  border-style: solid;
+  border-color: #f0a090;
+}
+
+.upload-zone.drag-over {
+  border-color: #e8866e;
+  background: rgba(252,228,214,0.95);
+}
+
+.upload-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.75rem;
+}
+
+.upload-label-icon {
+  width: 1rem;
+  height: 1rem;
+  display: inline;
+  margin-right: 0.25rem;
+  vertical-align: middle;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.upload-icon-wrapper {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  background: #fce4d6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #f0a090;
+}
+
+.upload-title {
+  color: #1a1a1a;
+  font-weight: 500;
+  margin: 0;
+}
+
+.upload-subtitle {
+  color: #7a6e6a;
+  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
+}
+
+.upload-meta {
+  font-size: 0.75rem;
+  color: #b8a09a;
+}
+
+.preview-img {
+  max-height: 12rem;
+  margin: 0 auto;
+  display: block;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(240,160,144,0.2);
+}
+
+.remove-btn {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: #e8866e;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  font-weight: 500;
+  font-family: inherit;
+  transition: color 0.2s;
+}
+
+.remove-btn:hover {
+  color: #c0644e;
+}
+
+.camera-btn {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  border: 2px solid #f5c9b3;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  margin-top: 1rem;
+}
+
+.camera-btn:hover {
+  background: #fef0ea;
+  border-color: #f0a090;
+}
+
+.camera-btn-icon-wrap {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: #fce4d6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.camera-btn:hover .camera-btn-icon-wrap {
+  background: #f5c9b3;
+}
+
+.camera-btn-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #e8866e;
+}
+
+.camera-btn-text {
+  font-weight: 500;
+  color: #1a1a1a;
+  font-size: 0.95rem;
+}
