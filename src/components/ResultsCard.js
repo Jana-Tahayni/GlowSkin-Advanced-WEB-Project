@@ -1,11 +1,12 @@
-// src/components/ResultsCard.js
 import CompatBadge from "./CompatBadge";
 import ScoreBar    from "./ScoreBar";
-
+import skincareImg from "../assets/skincare.jpg"; 
+import verdict from "../assets/verdict.jpg"; 
 const ResultsCard = ({ result }) => (
+  
   <div className="fade-up">
 
-    {/* ── Scores card ── */}
+   
     <div className="card" style={{ marginBottom: "1.4rem" }}>
       <div
         style={{
@@ -22,10 +23,8 @@ const ResultsCard = ({ result }) => (
         <CompatBadge level={result.compatibility} />
       </div>
 
-      {/* Decorative image placeholder */}
-      <div className="image-placeholder" style={{ height: 100, marginBottom: "1.6rem" }}>
-        {/* Replace with product image */}
-        <span style={{ fontSize: ".72rem", letterSpacing: ".1em" }}>Product Visual</span>
+        <div className="image-placeholder" style={{ height: 200, width: 200, marginBottom: "1.6rem" }}>
+        <img src={skincareImg} alt="Skincare product" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }} />
       </div>
 
       <ScoreBar label="Effectiveness Score"    value={result.effectivenessScore} delay={0}   />
@@ -65,30 +64,38 @@ const ResultsCard = ({ result }) => (
       </div>
     )}
 
-    {/* ── Verdict ── */}
-    <div className="verdict-card delay-3 fade-up">
-      {/* Decorative image placeholder */}
-      <div className="image-placeholder" style={{ height: 80, marginBottom: "1.6rem" }}>
-        {/* Replace with verdict/skincare image */}
-        <span style={{ fontSize: ".72rem", letterSpacing: ".1em" }}>Skincare Visual</span>
-      </div>
-
-      <div className="verdict-score">{result.overallScore}</div>
-      <div className="verdict-label">Overall Score</div>
-      <p className="verdict-text">{result.verdict}</p>
-
-      <div
+    <div
+        className="delay-3 fade-up"
         style={{
-          display: "flex", gap: "1rem", justifyContent: "center",
-          marginTop: "1.8rem", flexWrap: "wrap",
+            backgroundImage: `
+            linear-gradient(rgba(244, 237, 221, 0.45), rgba(209, 185, 168, 0.50)),
+            url(${verdict})
+            `,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            borderRadius: "var(--radius)",
+            padding: "3rem",
+            border: "1px solid var(--accent)",
+            textAlign: "center",
         }}
-      >
-        <button className="btn-secondary">Save to History</button>
-        <button className="btn-secondary">Share Results</button>
-      </div>
+        >
+        <div className="verdict-score">{result.overallScore}</div>
+        <div className="verdict-label">Overall Score</div>
+        <p className="verdict-text">{result.verdict}</p>
+
+        <div
+            style={{
+            display: "flex", gap: "1rem", justifyContent: "center",
+            marginTop: "1.8rem", flexWrap: "wrap",
+            }}
+        >
+            <button className="btn-secondary">Save to History</button>
+            <button className="btn-secondary">Share Results</button>
+        </div>
     </div>
+        
+</div>
+    
+    );
 
-  </div>
-);
-
-export default ResultsCard;
+    export default ResultsCard;
