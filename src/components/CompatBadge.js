@@ -1,5 +1,3 @@
-// src/components/CompatBadge.js
-
 const CompatBadge = ({ level }) => {
   const cls =
     level === "High"   ? "badge-high"   :
@@ -16,5 +14,4 @@ const CompatBadge = ({ level }) => {
     </span>
   );
 };
-
 export default CompatBadge;

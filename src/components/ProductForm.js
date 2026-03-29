@@ -1,4 +1,3 @@
-// src/components/ProductForm.js
 import { useState } from "react";
 import ImageUpload from "./ImageUpload";
  
@@ -35,10 +34,8 @@ const ProductForm = ({ onAnalyze, loading }) => {
         />
       </div>
  
-      {/* OR divider */}
       <div className="or-divider">or upload ingredient label</div>
  
-      {/* Image upload */}
       <div style={{ marginBottom: "1.4rem" }}>
         <ImageUpload preview={imgPreview} onFile={setImgPreview} />
         {imgPreview && (
@@ -52,7 +49,6 @@ const ProductForm = ({ onAnalyze, loading }) => {
         )}
       </div>
  
-      {/* Skin type */}
       <div style={{ marginBottom: "1.6rem" }}>
         <label
           style={{
@@ -76,7 +72,6 @@ const ProductForm = ({ onAnalyze, loading }) => {
         </select>
       </div>
  
-      {/* Analyze button */}
       <button
         className="btn-primary"
         disabled={!canSubmit}
