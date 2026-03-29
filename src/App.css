@@ -68,19 +68,48 @@ h1, h2, h3, h4, h5 {
 .nav-links a:hover,
 .nav-links a.active { color: var(--darkest); }
 .nav-links a.active { border-bottom: 1.5px solid var(--darkest); padding-bottom: 2px; }
-
-/* ── Hero ── */
+/* ── Hero redesign ── */
 .hero {
   background: linear-gradient(135deg, var(--cream) 40%, var(--nude) 100%);
-  padding: 6rem 2rem 4rem;
-  text-align: center;
-  position: relative; overflow: hidden;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
 }
 .hero::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 70% 20%, rgba(192,97,74,.18) 0%, transparent 60%);
+  background: radial-gradient(
+    ellipse at 30% 50%,
+    rgba(192,97,74,.12) 0%,
+    transparent 65%
+  );
   pointer-events: none;
+  z-index: 1;
+}
+
+/* ── داخل الـ hero: عمودين ── */
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 3rem;
+  gap: 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── النص ── */
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 }
 .hero-eyebrow {
   font-size: .75rem; font-weight: 600; letter-spacing: .2em;
@@ -88,39 +117,84 @@ h1, h2, h3, h4, h5 {
   margin-bottom: 1.2rem;
 }
 .hero-title {
-  font-size: clamp(2.6rem, 5vw, 4.2rem);
-  line-height: 1.12; color: var(--darkest);
-  margin-bottom: 1.1rem;
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  line-height: 1.1; color: var(--darkest);
+  margin-bottom: 1.2rem;
 }
 .hero-title em { font-style: italic; color: var(--dark); }
 .hero-sub {
-  font-size: 1rem; color: var(--mid); max-width: 480px;
-  margin: 0 auto 2.8rem; line-height: 1.7;
+  font-size: 1rem; color: var(--mid);
+  line-height: 1.75; margin-bottom: 2.2rem;
+  max-width: 400px;
 }
 
-/* ── Hero Image Placeholder ── */
-.hero-image {
-  /* Replace with skincare image */
-  width: min(520px, 90%);
-  height: 260px;
-  margin: 0 auto;
-  border-radius: var(--radius);
-  background: linear-gradient(120deg, var(--nude) 0%, var(--accent) 70%, rgba(192,97,74,.35) 100%);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--dark); font-size: .85rem; letter-spacing: .1em;
-  text-transform: uppercase;
+/* ── زر CTA ── */
+.hero-cta {
+  display: inline-block;
+  padding: .9rem 2.2rem;
+  background: var(--pop);
+  color: #FFF8F5;
+  border-radius: 10px;
+  font-family: 'Jost', sans-serif;
+  font-size: .85rem; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase;
+  text-decoration: none;
+  transition: background .2s, transform .15s, box-shadow .2s;
+  box-shadow: 0 4px 16px rgba(192,97,74,.30);
+}
+.hero-cta:hover {
+  background: #A84E3B;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(192,97,74,.38);
+}
+
+/* ── الفيديو ── */
+.hero-video-wrap {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
   box-shadow: var(--shadow-lg);
-  position: relative; overflow: hidden;
+  aspect-ratio: 4 / 5;       /* portrait — مثل زجاجة سيروم */
+  max-height: 560px;
 }
-.hero-image::after {
-  content: '';
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hero-video-overlay {
   position: absolute; inset: 0;
-  background: repeating-linear-gradient(
-    45deg, transparent, transparent 8px,
-    rgba(255,255,255,.07) 8px, rgba(255,255,255,.07) 9px
+  background: linear-gradient(
+    160deg,
+    transparent 50%,
+    rgba(44,26,14,.18) 100%
   );
+  border-radius: 24px;
 }
 
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 4rem 1.5rem;
+  }
+  .hero-text {
+    align-items: center;
+    order: 2;
+  }
+  .hero-sub { max-width: 100%; }
+  .hero-video-wrap {
+    order: 1;
+    max-height: 300px;
+    aspect-ratio: 16 / 9;   /* landscape على الموبايل */
+  }
+}
+@media (max-width: 480px) {
+  .hero-inner { padding: 2.5rem 1.2rem; }
+  .hero-video-wrap { max-height: 220px; }
+}
 /* ── Card ── */
 .card {
   background: #FFFAF6;

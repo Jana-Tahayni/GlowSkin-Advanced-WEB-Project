@@ -1,6 +1,6 @@
-// src/App.js
 import { useState } from "react";
 import "./App.css";
+import heroVideo from "./assets/hero2.mp4";
 
 import Navbar      from "./components/Navbar";
 import ProductForm from "./components/ProductForm";
@@ -8,7 +8,6 @@ import ResultsCard from "./components/ResultsCard";
 import HistoryPage from "./components/HistoryPage";
 import PaymentPage from "./pages/PaymentPage";
 
-// ── Mock result — replace with real Anthropic API response ──
 const MOCK_RESULT = {
   productName:         "CeraVe Moisturizing Cream",
   compatibility:       "High",
@@ -67,32 +66,48 @@ export default function App() {
       {page === "analyzer" && (
         <>
           {/* Hero section */}
-          <section className="hero">
-            <p className="hero-eyebrow fade-up">AI-Powered · Ingredient Intelligence</p>
-            <h1 className="hero-title fade-up delay-1">
-              Analyze Your<br /><em>Skincare Product</em>
-            </h1>
-            <p className="hero-sub fade-up delay-2">
-              Paste a product name or upload an ingredient label.
-              Our AI matches it to your skin profile and surfaces
-              what truly matters — in seconds.
-            </p>
+         <section className="hero">
+  <div className="hero-inner">
 
-            {/* Hero image placeholder */}
-            <div className="hero-image fade-up delay-3">
-              {/* Replace with skincare image */}
-              <span>Skincare Hero Image</span>
-            </div>
-          </section>
+    <div className="hero-text">
+      <p className="hero-eyebrow fade-up">AI-Powered · Ingredient Intelligence</p>
+      <h1 className="hero-title fade-up delay-1">
+        Analyze Your<br /><em>Skincare Product</em>
+      </h1>
+      <p className="hero-sub fade-up delay-2">
+        Paste a product name or upload an ingredient label.
+        Our AI matches it to your skin profile and surfaces
+        what truly matters — in seconds.
+      </p>
+      <a href="#analyzer-form" className="hero-cta fade-up delay-3">
+        ✦ Start Analyzing
+      </a>
+    </div>
+
+    {/* ── يمين: الفيديو ── */}
+    <div className="hero-video-wrap fade-up delay-2">
+      <video
+        src={heroVideo}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="hero-video"
+      />
+      {/* طبقة overlay خفيفة فوق الفيديو */}
+      <div className="hero-video-overlay" />
+    </div>
+
+  </div>
+</section>
 
           {/* Main content */}
           <div style={{ maxWidth: 820, margin: "0 auto", padding: "2.5rem 1.2rem 5rem" }}>
             <div
               style={{
-                display: "grid",
-                gridTemplateColumns: result ? "1fr 1.3fr" : "1fr",
-                gap: "1.8rem",
-                alignItems: "start",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.8rem",
               }}
             >
               {/* Left column — form */}
