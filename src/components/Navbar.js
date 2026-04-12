@@ -5,14 +5,16 @@ const Navbar = ({ page, setPage }) => {
       <a className="nav-brand" href="#">DermaSkin</a>
  
       <ul className="nav-links">
-        {["analyzer", "history"].map((p) => (
+        {["analyzer", "history" , "payment"].map((p) => (
           <li key={p}>
             <a
               href="#"
               className={page === p ? "active" : ""}
               onClick={(e) => { e.preventDefault(); setPage(p); }}
             >
-              {p === "analyzer" ? "Product Analyzer" : "History"}
+              {p === "analyzer" ? "Product Analyzer"
+                : p === "history"? "History"
+                 : "Payment"}
             </a>
           </li>
         ))}

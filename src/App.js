@@ -6,6 +6,7 @@ import Navbar      from "./components/Navbar";
 import ProductForm from "./components/ProductForm";
 import ResultsCard from "./components/ResultsCard";
 import HistoryPage from "./components/HistoryPage";
+import PaymentPage from "./pages/PaymentPage";
 
 // ── Mock result — replace with real Anthropic API response ──
 const MOCK_RESULT = {
@@ -38,6 +39,7 @@ export default function App() {
   const [page,    setPage]    = useState("analyzer"); // "analyzer" | "history"
   const [loading, setLoading] = useState(false);
   const [result,  setResult]  = useState(null);
+  
 
   // ── Wire this to your Anthropic API call ──
   const handleAnalyze = async ({ productName, skinType, imgPreview }) => {
@@ -60,7 +62,7 @@ export default function App() {
       {page === "history" && (
         <HistoryPage onBack={() => setPage("analyzer")} />
       )}
-
+{page === "payment" && <PaymentPage />}
       {/* ── Analyzer page ── */}
       {page === "analyzer" && (
         <>
