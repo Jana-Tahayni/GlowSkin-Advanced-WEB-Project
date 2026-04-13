@@ -6,6 +6,9 @@ import Navbar      from "./components/Navbar";
 import ProductForm from "./components/ProductForm";
 import ResultsCard from "./components/ResultsCard";
 import HistoryPage from "./components/HistoryPage";
+import GlowAuth from "./auth/LoginForm";
+
+
 
 const MOCK_RESULT = {
   productName:         "CeraVe Moisturizing Cream",
@@ -34,10 +37,10 @@ const MOCK_RESULT = {
 };
 
 export default function App() {
-  const [page,    setPage]    = useState("analyzer"); // "analyzer" | "history"
+ // const [page,    setPage]    = useState("analyzer"); // "analyzer" | "history"
   const [loading, setLoading] = useState(false);
   const [result,  setResult]  = useState(null);
-
+  const [page, setPage] = useState("auth");
   // ── Wire this to your Anthropic API call ──
   const handleAnalyze = async ({ productName, skinType, imgPreview }) => {
     setResult(null);
@@ -59,7 +62,13 @@ export default function App() {
       {page === "history" && (
         <HistoryPage onBack={() => setPage("analyzer")} />
       )}
+ {page === "auth" && (
+        <GlowAuth onDone={() => setPage("analyzer")} />
+      )}
 
+      {page === "analyzer" && (
+        <h1>Analyzer Page</h1>
+      )}
       {/* ── Analyzer page ── */}
       {page === "analyzer" && (
         <>
