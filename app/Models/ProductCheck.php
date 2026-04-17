@@ -19,8 +19,8 @@ class ProductCheck extends Model
         'verdict',
     ];
       protected $casts = [
-        'key_ingredients' => 'array', // JSON في DB ← array في PHP
-        'warnings'        => 'array', // JSON في DB ← array في PHP
+        'key_ingredients' => 'array', 
+        'warnings'        => 'array', 
     ];
 
      public function user(): BelongsTo
