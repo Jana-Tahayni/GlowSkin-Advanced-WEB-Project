@@ -17,14 +17,12 @@ const HistoryPage = ({ onBack }) => (
     </button>
 
     <p className="section-label">Your Profile</p>
-    <h2 className="section-title" style={{ fontSize: "2rem", marginBottom: "1.8rem" }}>
+    <h2 className="section-title" style={{ fontSize: "2rem", marginBottom: "1.6rem" }}>
       Analysis History
     </h2>
 
-    {/* Decorative image placeholder */}
-    <div className="image-placeholder" style={{ height: 90, marginBottom: "2rem" }}>
-      {/* Replace with history/skincare image */}
-      <span style={{ fontSize: ".72rem", letterSpacing: ".1em" }}>History Visual</span>
+    <div className="image-placeholder" style={{  height: 450,  marginBottom: "1.6rem" }}>
+      <img src="https://i.pinimg.com/1200x/b5/d1/f5/b5d1f5dc846c127de60f3b3316567607.jpg" alt="History Visual" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }} />
     </div>
 
     {MOCK_HISTORY.length === 0 ? (
