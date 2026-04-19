@@ -26,20 +26,53 @@ class ProductAnalyzerService
 
     public function analyzeByName(string $productName, string $skinType): array
     {
-       
+        return [];
     }
 
     public function analyzeByImage(string $base64Image, string $mimeType, string $skinType): array
     {
-       
+        return [];
     }
 
-    private function callGemini(array $messages): array
+    private function callGemini(string $prompt): array
     {
-     
+      
+    try {
+        $response = Http::timeout(60)
+            ->post($this->API_URL . '?key=' . $this->apiKey, [
+                'contents' => [
+                    [
+                        'parts' => [
+                            ['text' => self::SYSTEM_PROMPT . "\n\n" . $prompt]
+                        ]
+                    ]
+                ],
+                'generationConfig' => [
+                    'maxOutputTokens' => self::MAX_TOKENS,
+                    'temperature'     => 0.1, 
+                ]
+            ]);
+
+        if ($response->failed()) {
+            Log::error('Gemini API error', [
+                'status' => $response->status(),
+                'body'   => $response->body(),
+            ]);
+            throw new RuntimeException('AI service is temporarily unavailable');
+        }
+        return $response->json();
+
+    } catch (RuntimeException $e) {
+        throw $e;
+    } catch (\Exception $e) {
+        Log::error('Gemini API call failed', ['message' => $e->getMessage()]);
+        throw new RuntimeException('AI service is temporarily unavailable');
+    }
+
     }
 
     private function parseGeminiResponse(array $data): array
     {
+    return [];
     }
 }

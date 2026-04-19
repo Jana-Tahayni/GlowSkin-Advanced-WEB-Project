@@ -103,20 +103,34 @@ class ProductController extends Controller
                 if ($search = $request->query('search')) {
                     $query->where('product_name', 'like', '%' . $search . '%');
                 }
-
                 if ($compatibility = $request->query('compatibility')) {
                     $query->where('compatibility', $compatibility);
                 }
-
                 $results = $query->get();
-
                 return response()->json($results, 200);
             }
            
             public function show(int $id): JsonResponse
             {
                 $record = ProductCheck::find($id);
+                if (!$record) {
+                    return response()->json(
+                        ['message' => 'Record not found'],
+                        404
+                    );
+                }
+                if ($record->user_id !== auth()->id()) {
+                    return response()->json(
+                        ['message' => 'Forbidden'],
+                        403
+                    );
+                }
+                return response()->json($record, 200);
+            }
 
+            public function destroy(int $id): JsonResponse
+            {
+                $record = ProductCheck::find($id);
                 if (!$record) {
                     return response()->json(
                         ['message' => 'Record not found'],
@@ -131,6 +145,12 @@ class ProductController extends Controller
                     );
                 }
 
-                return response()->json($record, 200);
+                if ($record->image_path) {
+                    Storage::disk('public')->delete($record->image_path);
+                }
+
+                $record->delete();
+                return response()->json(null, 204);
             }
+
         }
