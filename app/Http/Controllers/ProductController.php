@@ -1,12 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Services\ProductAnalyzerService;
 use Illuminate\Http\Request;
-
+use App\Models\ProductCheck;
+use Illuminate\Http\JsonResponse;
+use App\Http\Requests\AnalyzeProductRequest;
+use App\Http\Requests\AnalyzeImageRequest;
 class ProductController extends Controller
 {
      public function __construct(
+        $userId = 5;
         private readonly ProductAnalyzerService $analyzerService
     ) {}
     public function analyze(AnalyzeProductRequest $request): JsonResponse
