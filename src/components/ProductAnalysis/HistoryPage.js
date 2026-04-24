@@ -1,5 +1,5 @@
 // src/components/HistoryPage.js
-import CompatBadge from "./CompatBadge";
+import CompatBadge from "./ProductAnalysis/CompatBadge";
 
 // ── Mock data — replace with real API call ──
 const MOCK_HISTORY = [

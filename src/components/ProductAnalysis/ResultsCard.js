@@ -1,4 +1,4 @@
-import CompatBadge from "./CompatBadge";
+import CompatBadge from "./ProductAnalysis/CompatBadge";
 import ScoreBar    from "./ScoreBar";
 import skincareImg from "../assets/skincare.jpg"; 
 import verdict from "../assets/verdict.jpg"; 

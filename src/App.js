@@ -2,8 +2,8 @@ import { useState } from "react";
 import "./App.css";
 import heroVideo from "./assets/hero2.mp4";
 
-import Navbar      from "./components/Navbar";
-import ProductForm from "./components/ProductForm";
+import Navbar      from "./components/ProductAnalysis/Navbar";
+import ProductForm from "./components/ProductAnalysis/ProductForm";
 import ResultsCard from "./components/ResultsCard";
 import HistoryPage from "./components/HistoryPage";
 import PaymentPage from "./pages/PaymentPage";
