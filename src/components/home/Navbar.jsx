@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { NAV_LINKS } from "../../data/consts";
+import { NAV_LINKS } from "../../data/data";
 import NotifPanel from "./NotifPanel";
 import AllNotificationsModal from "./AllNotificationsModal";
 

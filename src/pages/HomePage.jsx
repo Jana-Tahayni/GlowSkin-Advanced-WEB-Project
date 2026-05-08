@@ -1,32 +1,52 @@
-import { STATS, FEATURES, TESTIMONIALS } from "../data/consts";
 
-function HeroCard() {
+import {TESTIMONIALS} from "../data/testimonials";
+import { STATS, FEATURES} from "../data/data";
+import Footer from '../components/home/Footer';
+import { FAQ_DATA } from "../data/FAQ";
+import "./HomePage.css";
+
+// function HeroCard() {
+//   return (
+//     <div className="hero-card">
+//       <div className="hc-head">
+//         <div className="hc-avatar">NR</div>
+//         <div>
+//           <div className="hc-name">Nour's Skin Report</div>
+//           <div className="hc-sub">Analyzed just now · Combination skin</div>
+//         </div>
+//       </div>
+//       <div className="hc-score-row">
+//         <span className="hc-label">Overall Skin Score</span>
+//         <span className="hc-score">78<sub>/100</sub></span>
+//       </div>
+//       <div className="progress-track">
+//         <div className="progress-fill" style={{ width: "78%" }} />
+//       </div>
+//       <div className="hc-grid">
+//         <div className="hc-metric"><div className="hc-metric-val">82%</div><div className="hc-metric-label">Hydration</div></div>
+//         <div className="hc-metric"><div className="hc-metric-val">91%</div><div className="hc-metric-label">Accuracy</div></div>
+//         <div className="hc-metric"><div className="hc-metric-val">65%</div><div className="hc-metric-label">Brightness</div></div>
+//         <div className="hc-metric"><div className="hc-metric-val">74%</div><div className="hc-metric-label">Smoothness</div></div>
+//       </div>
+//       <div className="hc-tags">
+//         <span className="tag tag-warn">Mild Dehydration</span>
+//         <span className="tag tag-ok">Clear Pores</span>
+//         <span className="tag tag-nude">T-Zone Oiliness</span>
+//       </div>
+//     </div>
+//   );
+// }
+function HeroVisual() {
   return (
-    <div className="hero-card">
-      <div className="hc-head">
-        <div className="hc-avatar">NR</div>
-        <div>
-          <div className="hc-name">Nour's Skin Report</div>
-          <div className="hc-sub">Analyzed just now · Combination skin</div>
-        </div>
-      </div>
-      <div className="hc-score-row">
-        <span className="hc-label">Overall Skin Score</span>
-        <span className="hc-score">78<sub>/100</sub></span>
-      </div>
-      <div className="progress-track">
-        <div className="progress-fill" style={{ width: "78%" }} />
-      </div>
-      <div className="hc-grid">
-        <div className="hc-metric"><div className="hc-metric-val">82%</div><div className="hc-metric-label">Hydration</div></div>
-        <div className="hc-metric"><div className="hc-metric-val">91%</div><div className="hc-metric-label">Accuracy</div></div>
-        <div className="hc-metric"><div className="hc-metric-val">65%</div><div className="hc-metric-label">Brightness</div></div>
-        <div className="hc-metric"><div className="hc-metric-val">74%</div><div className="hc-metric-label">Smoothness</div></div>
-      </div>
-      <div className="hc-tags">
-        <span className="tag tag-warn">Mild Dehydration</span>
-        <span className="tag tag-ok">Clear Pores</span>
-        <span className="tag tag-nude">T-Zone Oiliness</span>
+    <div className="hero-visual">
+      <div className="scanner-container">
+        <img src="/images/hero.jpg" alt="AI Scan" className="main-scan-img" />
+        
+        <div className="scan-line"></div>
+
+        <div className="analysis-tag tag-1">✦ Personlized Routine</div>
+        <div className="analysis-tag tag-2">✦ Smooth Texture</div>
+        <div className="analysis-tag tag-3">✦ Doctor Review</div>
       </div>
     </div>
   );
@@ -46,8 +66,9 @@ function HomePage({ setPage }) {
             <button className="btn btn-outline" onClick={() => setPage("payment")}>See Plans</button>
           </div>
         </div>
-        <HeroCard />
+        <HeroVisual />
       </div>
+
 
       {/* Stats */}
       <div className="stats-bar">
@@ -74,7 +95,12 @@ function HomePage({ setPage }) {
         </div>
         <div className="features-grid">
           {FEATURES.map(f => (
-            <div key={f.title} className="feature-card">
+            <div 
+        key={f.title} 
+        className="feature-card" 
+        onClick={() => setPage(f.page)}
+        style={{ cursor: "pointer" }} 
+      >
               <div className="feat-icon">{f.icon}</div>
               <div className="feat-title">{f.title}</div>
               <div className="feat-desc">{f.desc}</div>
@@ -90,7 +116,7 @@ function HomePage({ setPage }) {
         <div className="section-eyebrow">Testimonials</div>
         <h2 className="section-title">Loved by thousands of users.</h2>
         <div className="testi-grid">
-          {TESTIMONIALS.map(t => (
+          {TESTIMONIALS?.map(t => (
             <div key={t.name} className="testi-card">
               <p className="testi-text">"{t.text}"</p>
               <div className="testi-author">
@@ -105,15 +131,22 @@ function HomePage({ setPage }) {
         </div>
       </div>
 
-      {/* CTA */}
-      <div className="cta-band">
-        <h2>Start your glow journey today.</h2>
-        <p>Free AI analysis, no credit card required. Upgrade anytime for doctor-reviewed care.</p>
-        <button className="btn btn-gold" style={{ fontSize:"0.9375rem", padding:"0.8rem 2.25rem" }}
-          onClick={() => setPage("analysis")}>
-          Analyze My Skin — It's Free
-        </button>
-      </div>
+      <div id="faq-section" className="section faq-section">
+        <div className="section-eyebrow">Support</div>
+          <h2 className="section-title">Common Questions</h2>
+            <div className="faq-list">
+              {FAQ_DATA.map((item, index) => (
+              <details key={index} className="faq-item">
+              <summary>{item.question}</summary>
+              <div className="faq-answer">{item.answer}</div>
+              </details>
+              ))}
+           </div>
+       </div>
+
+
+
+      <Footer setPage={setPage} />
     </>
   );
 }

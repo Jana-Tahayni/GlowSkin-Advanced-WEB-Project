@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./styles/global.css";
-import { NAV_LINKS } from "./data/consts";
+import { NAV_LINKS } from "./data/data";
 import Navbar from "./components/home/Navbar";
 
 import Home from "./pages/HomePage";
-import Payment from "./pages/PaymentPage";
+import Payment from "./pages/PaymentPage.jsx";
 
 export default function App() {
   const [page, setPage] = useState("home");

@@ -9,22 +9,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->id(); // bigint PK
-            
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            
-            $table->foreignId('analysis_id')->constrained('skin_analyses')->onDelete('cascade');
-            
-            $table->decimal('amount', 10, 2);
-            $table->string('currency')->default('USD');
-            
-            $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');
-            
-            $table->string('stripe_id')->nullable(); 
-            $table->timestamp('paid_at')->nullable();
-            
-            $table->timestamps(); 
-        });
+        $table->id();
+        // $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->unsignedBigInteger('user_id')->nullable();
+        // $table->foreignId('analysis_id')->constrained('skin_analyses')->onDelete('cascade');
+        $table->unsignedBigInteger('analysis_id')->nullable();
+        $table->decimal('amount', 10, 2);
+        $table->string('currency', 3)->default('USD');
+        $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');
+        $table->string('stripe_id')->unique()->nullable();
+        $table->timestamp('paid_at')->nullable();
+        $table->timestamps(); 
+    });
+
     }
 
     public function down(): void
