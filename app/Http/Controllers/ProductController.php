@@ -10,7 +10,7 @@ use App\Http\Requests\AnalyzeImageRequest;
 class ProductController extends Controller
 {
      public function __construct(
-        $userId = 5;
+      
         private readonly ProductAnalyzerService $analyzerService
     ) {}
     public function analyze(AnalyzeProductRequest $request): JsonResponse
