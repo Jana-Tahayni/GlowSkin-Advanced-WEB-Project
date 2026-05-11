@@ -1,0 +1,67 @@
+.skin-type-section label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.75rem;
+}
+
+.skin-type-section label svg {
+  display: inline;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+}
+
+.skin-type-optional {
+  font-weight: 400;
+  color: #b8a09a;
+}
+
+.skin-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .skin-type-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.skin-type-btn {
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid #f5c9b3;
+  background: white;
+  color: #7a6e6a;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+}
+
+.skin-type-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(240,160,144,0.3);
+  border-color: #f0a090;
+  background: #fef0ea;
+}
+
+.skin-type-btn.selected {
+  background: linear-gradient(135deg, #f0a090 0%, #e8866e 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 8px 25px -5px rgba(240,160,144,0.45);
+}
+
+.skin-type-btn.col-span-2 {
+  grid-column: span 2;
+}
+
+@media (min-width: 640px) {
+  .skin-type-btn.col-span-2 {
+    grid-column: span 1;
+  }
+}
