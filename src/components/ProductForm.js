@@ -1,20 +1,27 @@
+// src/components/ProductForm.js
 import { useState } from "react";
 import ImageUpload from "./ImageUpload";
- 
+
 const ProductForm = ({ onAnalyze, loading }) => {
   const [productName, setProductName] = useState("");
-  const [skinType, setSkinType]       = useState("");
-  const [imgPreview, setImgPreview]   = useState(null);
- 
-  const canSubmit = (productName.trim() || imgPreview) && skinType && !loading;
- 
+  const [skinType,    setSkinType]    = useState("");
+  const [imgPreview,  setImgPreview]  = useState(null);
+  const [imgFile,     setImgFile]     = useState(null); 
+
+  const canSubmit = (productName.trim() || imgFile) && skinType && !loading;
+
+  const handleRemoveImage = () => {
+    setImgPreview(null);
+    setImgFile(null);  
+  };
+
   return (
     <div className="card fade-up">
       <p className="section-label">Step 1</p>
       <h2 className="section-title" style={{ fontSize: "1.5rem", marginBottom: "1.4rem" }}>
         Tell us about your product
       </h2>
- 
+
       {/* Product name */}
       <div style={{ marginBottom: "1rem" }}>
         <label
@@ -33,22 +40,28 @@ const ProductForm = ({ onAnalyze, loading }) => {
           onChange={(e) => setProductName(e.target.value)}
         />
       </div>
- 
+
       <div className="or-divider">or upload ingredient label</div>
- 
+
       <div style={{ marginBottom: "1.4rem" }}>
-        <ImageUpload preview={imgPreview} onFile={setImgPreview} />
+        <ImageUpload
+          preview={imgPreview}
+          onFile={(url, file) => {   // ← استقبلي الاثنين
+            setImgPreview(url);
+            setImgFile(file);
+          }}
+        />
         {imgPreview && (
           <button
             className="btn-secondary"
             style={{ marginTop: ".6rem" }}
-            onClick={() => setImgPreview(null)}
+            onClick={handleRemoveImage}
           >
             Remove image
           </button>
         )}
       </div>
- 
+
       <div style={{ marginBottom: "1.6rem" }}>
         <label
           style={{
@@ -71,11 +84,11 @@ const ProductForm = ({ onAnalyze, loading }) => {
           <option value="normal">Normal</option>
         </select>
       </div>
- 
+
       <button
         className="btn-primary"
         disabled={!canSubmit}
-        onClick={() => onAnalyze({ productName, skinType, imgPreview })}
+        onClick={() => onAnalyze({ productName, skinType, imgPreview, imgFile })}  
       >
         {loading ? (
           <><span className="spinner" /> Analyzing with AI…</>
@@ -86,5 +99,5 @@ const ProductForm = ({ onAnalyze, loading }) => {
     </div>
   );
 };
- 
+
 export default ProductForm;

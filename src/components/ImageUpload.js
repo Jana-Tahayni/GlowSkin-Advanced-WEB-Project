@@ -1,16 +1,16 @@
 // src/components/ImageUpload.js
 import { useState, useRef } from "react";
- 
+
 const ImageUpload = ({ preview, onFile }) => {
   const [drag, setDrag] = useState(false);
   const inputRef = useRef();
- 
+
   const handleFile = (file) => {
     if (!file) return;
     const url = URL.createObjectURL(file);
-    onFile(url);
+    onFile(url, file); // ← أضفنا file كـ argument ثاني
   };
- 
+
   return (
     <div
       className={`upload-zone ${drag ? "drag-over" : ""}`}
@@ -30,7 +30,7 @@ const ImageUpload = ({ preview, onFile }) => {
         hidden
         onChange={(e) => handleFile(e.target.files[0])}
       />
- 
+
       {preview ? (
         <img src={preview} alt="Ingredient label" className="upload-preview" />
       ) : (
@@ -48,5 +48,5 @@ const ImageUpload = ({ preview, onFile }) => {
     </div>
   );
 };
- 
+
 export default ImageUpload;
