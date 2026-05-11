@@ -1,17 +1,24 @@
 const CompatBadge = ({ level }) => {
+   const normalized =
+    level === "good"    ? "High"   :
+    level === "neutral" ? "Medium" :
+    level === "bad"     ? "Low"    :
+    level;  
+
   const cls =
-    level === "High"   ? "badge-high"   :
-    level === "Medium" ? "badge-medium" :
-                         "badge-low";
+    normalized === "High"   ? "badge-high"   :
+    normalized === "Medium" ? "badge-medium" :
+                              "badge-low";
 
   const icon =
-    level === "High"   ? "✓" :
-    level === "Medium" ? "~" : "!";
+    normalized === "High"   ? "✓" :
+    normalized === "Medium" ? "~" : "!";
 
   return (
     <span className={`badge ${cls}`}>
-      <span>{icon}</span> {level} Compatibility
+      <span>{icon}</span> {normalized} Compatibility
     </span>
   );
 };
+
 export default CompatBadge;

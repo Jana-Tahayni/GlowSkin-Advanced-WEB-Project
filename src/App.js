@@ -39,17 +39,18 @@ export default function App() {
           body:    formData,
         });
         const data = await res.json();
-        setResult({
-          productName:        data.product_name,
-          effectivenessScore: data.effectiveness_score,
-          safetyScore:        data.safety_score,
-          compatibilityScore: data.compatibility_score ?? 0,
-          overallScore:       data.overall_score       ?? 0,
-          compatibility:      data.compatibility,
-          ingredients:        data.key_ingredients,
-          warnings:           data.warnings,
-          verdict:            data.verdict,
-        });
+       setResult({
+        productName:        data.product_name,
+        imgPreview:         imgPreview,  
+        effectivenessScore: data.effectiveness_score,
+        safetyScore:        data.safety_score,
+        compatibilityScore: Math.round((data.effectiveness_score + data.safety_score) / 2),  
+        overallScore:       Math.round((data.effectiveness_score + data.safety_score) / 2),  
+        compatibility:      data.compatibility,
+        ingredients: data.key_ingredients ?? [],
+        warnings:           data.warnings ?? [],
+        verdict:            data.verdict,
+      });
 
       } else {
         const res  = await fetch("/api/product", {
@@ -60,13 +61,14 @@ export default function App() {
         const data = await res.json();
         setResult({
           productName:        data.product_name,
+          imgPreview:         imgPreview,  
           effectivenessScore: data.effectiveness_score,
           safetyScore:        data.safety_score,
-          compatibilityScore: data.compatibility_score ?? 0,
-          overallScore:       data.overall_score       ?? 0,
+          compatibilityScore: Math.round((data.effectiveness_score + data.safety_score) / 2),  
+          overallScore:       Math.round((data.effectiveness_score + data.safety_score) / 2),  
           compatibility:      data.compatibility,
-          ingredients:        data.key_ingredients,
-          warnings:           data.warnings,
+          ingredients:        data.key_ingredients ?? [],
+          warnings:           data.warnings ?? [],
           verdict:            data.verdict,
         });
       }

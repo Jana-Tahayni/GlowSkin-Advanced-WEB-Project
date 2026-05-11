@@ -1,14 +1,14 @@
 // src/components/ImageUpload.js
 import { useState, useRef } from "react";
 
-const ImageUpload = ({ preview, onFile }) => {
+  const ImageUpload = ({ preview, onFile }) => {
   const [drag, setDrag] = useState(false);
   const inputRef = useRef();
 
   const handleFile = (file) => {
     if (!file) return;
     const url = URL.createObjectURL(file);
-    onFile(url, file); // ← أضفنا file كـ argument ثاني
+    onFile(url, file);  
   };
 
   return (

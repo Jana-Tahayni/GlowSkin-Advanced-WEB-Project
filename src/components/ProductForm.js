@@ -46,7 +46,7 @@ const ProductForm = ({ onAnalyze, loading }) => {
       <div style={{ marginBottom: "1.4rem" }}>
         <ImageUpload
           preview={imgPreview}
-          onFile={(url, file) => {   // ← استقبلي الاثنين
+          onFile={(url, file) => {    
             setImgPreview(url);
             setImgFile(file);
           }}

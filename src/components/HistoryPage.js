@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import CompatBadge from "./CompatBadge";
 
-const HistoryPage = ({ onBack, onSelect }) => { 
+const HistoryPage = ({ onBack, onSelect, authHeaders }) => {  
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search,  setSearch]  = useState("");
@@ -15,7 +15,9 @@ const HistoryPage = ({ onBack, onSelect }) => {
       if (search) params.append("search", search);
       if (filter) params.append("compatibility", filter);
 
-      const res  = await fetch(`/api/products/history?${params}`);
+      const res  = await fetch(`/api/products/history?${params}`, {
+        headers: authHeaders,   
+      });
       const data = await res.json();
       setHistory(data);
     } catch (error) {
@@ -28,9 +30,12 @@ const HistoryPage = ({ onBack, onSelect }) => {
   useEffect(() => { fetchHistory(); }, [filter]);
 
   const handleDelete = async (e, id) => {
-    e.stopPropagation();  
+    e.stopPropagation();
     try {
-      await fetch(`/api/products/history/${id}`, { method: "DELETE" });
+      await fetch(`/api/products/history/${id}`, {
+        method:  "DELETE",
+        headers: authHeaders,   
+      });
       setHistory(history.filter(item => item.id !== id));
     } catch (error) {
       console.error(error);
@@ -79,9 +84,9 @@ const HistoryPage = ({ onBack, onSelect }) => {
           onChange={(e) => setFilter(e.target.value)}
         >
           <option value="">All</option>
-          <option value="High">High</option>
-          <option value="Medium">Medium</option>
-          <option value="Low">Low</option>
+          <option value="good">High</option>     
+          <option value="neutral">Medium</option>  
+          <option value="bad">Low</option>        
         </select>
       </div>
 

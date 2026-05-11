@@ -23,14 +23,26 @@ const ResultsCard = ({ result }) => (
         <CompatBadge level={result.compatibility} />
       </div>
 
-        <div className="image-placeholder" style={{ height: 200, width: 200, marginBottom: "1.6rem" }}>
-        <img src={skincareImg} alt="Skincare product" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }} />
-      </div>
-
-      <ScoreBar label="Effectiveness Score"    value={result.effectivenessScore} delay={0}   />
-      <ScoreBar label="Safety Score"           value={result.safetyScore}        delay={150} />
-      <ScoreBar label="Overall Compatibility"  value={result.compatibilityScore} delay={300} />
+        {result.imgPreview && (
+    <div style={{ marginBottom: "1.6rem" }}>
+      <img
+        src={result.imgPreview}
+        alt="Product"
+        style={{
+          width: 200,
+          height: 200,
+          objectFit: "cover",
+          borderRadius: "var(--radius)",
+          border: "1px solid var(--accent)",
+        }}
+      />
     </div>
+  )}
+
+        <ScoreBar label="Effectiveness Score"    value={result.effectivenessScore} delay={0}   />
+        <ScoreBar label="Safety Score"           value={result.safetyScore}        delay={150} />
+        <ScoreBar label="Overall Compatibility"  value={result.compatibilityScore} delay={300} />
+      </div>
 
     {/* ── Ingredients ── */}
     <div className="card delay-1 fade-up" style={{ marginBottom: "1.4rem" }}>
