@@ -235,3 +235,21 @@
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
+/* ── History nav button ── */
+.history-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #c0644e;
+  background: #fef0ea;
+  border: 1px solid #f5c9b3;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.history-nav-btn:hover { background: #fce4d6; }

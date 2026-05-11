@@ -182,3 +182,25 @@
     border-right-color: var(--border);
   }
 }
+
+/* Wide container for History & Before/After pages */
+.wide-container {
+  width: 95%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .wide-container {
+    width: 100%;
+    padding: 1rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .wide-container {
+    width: 100%;
+    padding: 1rem;
+  }
+}
