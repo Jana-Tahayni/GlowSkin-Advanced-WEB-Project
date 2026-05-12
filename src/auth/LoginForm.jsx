@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import api from "../api";
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500&display=swap');
 
@@ -234,10 +234,23 @@ function LoginForm({ onSwitch }) {
   const [showPw, setShowPw] = useState(false);
   const [form, setForm] = useState({ email: "", password: "", remember: false });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(`Welcome back, ${form.email}!`);
-  };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await api.post('/auth/login', {
+      email: form.email,
+      password: form.password
+    });
+    
+    // Save the token (assuming Laravel returns { access_token: "..." })
+    localStorage.setItem('token', response.data.access_token);
+    alert("Login Successful!");
+    
+    // Redirect user or update app state here
+  } catch (error) {
+    alert(error.response?.data?.message || "Login failed");
+  }
+};
 
   return (
     <form onSubmit={handleSubmit}>
@@ -318,12 +331,24 @@ function RegisterForm({ onSwitch }) {
 
   const strength = getStrength(form.password);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (form.password !== form.confirm) return alert("Passwords do not match.");
-    if (!form.terms) return alert("Please accept the terms.");
-    alert(`Welcome to Glow, ${form.firstName}!`);
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (form.password !== form.confirm) return alert("Passwords do not match.");
+
+  try {
+    const response = await api.post('/auth/register', {
+      name: `${form.firstName} ${form.lastName}`,
+      email: form.email,
+      password: form.password,
+      password_confirmation: form.confirm // Laravel usually expects this
+    });
+
+    alert("Registration Successful! Please Login.");
+    onSwitch(); // Switch to login tab
+  } catch (error) {
+    alert(error.response?.data?.message || "Registration failed");
+  }
+};
 
   return (
     <form onSubmit={handleSubmit}>
@@ -397,9 +422,13 @@ function RegisterForm({ onSwitch }) {
         <div className="glow-divider-line" />
       </div>
 
-      <button type="button" className="glow-social">
-        <GoogleIcon /> Continue with Google
-      </button>
+      <button 
+  type="button" 
+  className="glow-social"
+  onClick={() => window.location.href = 'http://127.0.0.1:8000/api/auth/google'}
+>
+  <GoogleIcon /> Continue with Google
+</button>
 
       <p className="glow-footer">
         Already have an account?{" "}
