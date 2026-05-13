@@ -4,13 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\SkinAnalysis;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
+
 
 class SkinAnalysisController extends Controller
 {
-    /**
-     * GET /api/analyses
-     * يجيب كل التحليلات (للـ History page)
-     */
+
+    #[OA\Get(
+    path: '/api/analyses',
+    summary: 'Get all skin analyses',
+    description: 'Returns all skin analyses ordered by date (newest first)',
+    tags: ['Skin Analysis'],
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: 'Success',
+            content: new OA\JsonContent(
+                properties: [
+                    new OA\Property(property: 'success', type: 'boolean', example: true),
+                    new OA\Property(property: 'data', type: 'array', items: new OA\Items(type: 'object'))
+                ]
+            )
+        )
+    ]
+)]
     public function index()
     {
         $analyses = SkinAnalysis::orderBy('created_at', 'desc')->get();
@@ -21,10 +38,19 @@ class SkinAnalysisController extends Controller
         ]);
     }
 
-    /**
-     * GET /api/analyses/{id}
-     * يجيب تحليل معين بالـ id
-     */
+    #[OA\Get(
+    path: '/api/analyses/{id}',
+    summary: 'Get a specific skin analysis',
+    tags: ['Skin Analysis'],
+    parameters: [
+        new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer', example: 1))
+    ],
+    responses: [
+        new OA\Response(response: 200, description: 'Success'),
+        new OA\Response(response: 404, description: 'Not found')
+    ]
+)]
+
     public function show($id)
     {
         $analysis = SkinAnalysis::find($id);
@@ -42,10 +68,30 @@ class SkinAnalysisController extends Controller
         ]);
     }
 
-    /**
-     * POST /api/analyze
-     * يستقبل الصورة، يرسلها لـ Claude API، يخزن النتيجة
-     */
+#[OA\Post(
+    path: '/api/analyze',
+    summary: 'Analyze a skin photo',
+    description: 'Sends a base64 image to Claude AI for skin analysis and saves the result',
+    tags: ['Skin Analysis'],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ['image'],
+            properties: [
+                new OA\Property(
+                    property: 'image',
+                    type: 'string',
+                    description: 'Base64 encoded image without data:image prefix',
+                    example: '/9j/4AAQSkZJRgAB...'
+                )
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 201, description: 'Analysis created successfully'),
+        new OA\Response(response: 422, description: 'Validation error')
+    ]
+)]
     public function analyze(Request $request)
     {
         // 1. التحقق من البيانات الواردة
@@ -73,10 +119,20 @@ class SkinAnalysisController extends Controller
         ], 201);
     }
 
-    /**
-     * DELETE /api/analyses/{id}
-     * يحذف تحليل معين
-     */
+
+    #[OA\Delete(
+    path: '/api/analyses/{id}',
+    summary: 'Delete a skin analysis',
+    tags: ['Skin Analysis'],
+    parameters: [
+        new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer', example: 1))
+    ],
+    responses: [
+        new OA\Response(response: 200, description: 'Deleted successfully'),
+        new OA\Response(response: 404, description: 'Not found')
+    ]
+)]
+
     public function destroy($id)
     {
         $analysis = SkinAnalysis::find($id);
@@ -96,10 +152,20 @@ class SkinAnalysisController extends Controller
         ]);
     }
 
-    /**
- * GET /api/analyses/compare?before={id}&after={id}
- * يجيب تحليلين للمقارنة (Before/After page)
- */
+#[OA\Get(
+    path: '/api/analyses/compare',
+    summary: 'Compare two skin analyses',
+    description: 'Returns two analyses with score difference for Before/After comparison',
+    tags: ['Skin Analysis'],
+    parameters: [
+        new OA\Parameter(name: 'before', in: 'query', required: true, schema: new OA\Schema(type: 'integer', example: 1)),
+        new OA\Parameter(name: 'after', in: 'query', required: true, schema: new OA\Schema(type: 'integer', example: 2))
+    ],
+    responses: [
+        new OA\Response(response: 200, description: 'Success'),
+        new OA\Response(response: 404, description: 'One or both analyses not found')
+    ]
+)]
 public function compare(Request $request)
 {
     // 1. التحقق من البيانات الواردة
@@ -135,9 +201,6 @@ public function compare(Request $request)
 }
 
 
-/**
- * ترسل الصورة لـ Claude API وتحصل على نتائج التحليل
- */
 private function analyzeWithClaude(string $imageBase64): array
 {
     $client = new \GuzzleHttp\Client();
