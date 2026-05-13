@@ -368,3 +368,87 @@
 
   .metric-left { width: 90px; }
 }
+
+/* ── Consult section ── */
+.consult-section {
+  border-color: rgba(240, 160, 144, 0.4) !important;
+  background: linear-gradient(135deg, #fef0ea 0%, #fdf6f0 100%) !important;
+}
+
+.consult-text {
+  font-size: 0.875rem;
+  color: #5a5450;
+  line-height: 1.7;
+  margin: 0 0 1rem;
+}
+
+.consult-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #f0a090 0%, #e8866e 100%);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 14px rgba(240, 160, 144, 0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.consult-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(240, 160, 144, 0.4);
+}
+
+/* ── Share menu ── */
+.share-wrap {
+  position: relative;
+}
+
+.share-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border: 1px solid #f5c9b3;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(240, 160, 144, 0.2);
+  min-width: 180px;
+  z-index: 10;
+  animation: fade-in-up 0.2s ease-out both;
+}
+
+.share-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.share-item:hover { background: #fef0ea; }
+
+.share-item.whatsapp { color: #25d366; }
+.share-item.whatsapp:hover { background: #f0faf0; }
+
+/* ── Print styles ── */
+@media print {
+  .results-actions,
+  .consult-section,
+  .history-nav-btn {
+    display: none !important;
+  }
+}

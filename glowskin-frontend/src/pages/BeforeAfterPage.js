@@ -1,61 +1,24 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ArrowLeft, ArrowLeftRight, TrendingUp, TrendingDown,
   Minus, Droplets, Sun, Shield, Zap, Heart, ChevronDown
 } from "lucide-react";
 import "./BeforeAfterPage.css";
 
-/* ── Mock scans (same shape as History) ── */
-const MOCK_SCANS = [
-  {
-    id: 1, label: "Today — May 10",
-    overallScore: 74, skinType: "Combination",
-    concerns: ["T-zone oiliness", "Minor pores"],
-    metrics: [
-      { id: "hydration",   label: "Hydration",  score: 82, icon: Droplets, color: "#5ba4cf" },
-      { id: "texture",     label: "Texture",    score: 68, icon: Zap,      color: "#b8c9a3" },
-      { id: "brightness",  label: "Brightness", score: 71, icon: Sun,      color: "#f5c9b3" },
-      { id: "protection",  label: "Protection", score: 60, icon: Shield,   color: "#c9a3b8" },
-      { id: "sensitivity", label: "Sensitivity",score: 79, icon: Heart,    color: "#f0a090" },
-    ],
-  },
-  {
-    id: 2, label: "Apr 22",
-    overallScore: 68, skinType: "Combination",
-    concerns: ["T-zone oiliness", "Dryness", "Dullness"],
-    metrics: [
-      { id: "hydration",   label: "Hydration",  score: 74, icon: Droplets, color: "#5ba4cf" },
-      { id: "texture",     label: "Texture",    score: 61, icon: Zap,      color: "#b8c9a3" },
-      { id: "brightness",  label: "Brightness", score: 65, icon: Sun,      color: "#f5c9b3" },
-      { id: "protection",  label: "Protection", score: 55, icon: Shield,   color: "#c9a3b8" },
-      { id: "sensitivity", label: "Sensitivity",score: 80, icon: Heart,    color: "#f0a090" },
-    ],
-  },
-  {
-    id: 3, label: "Apr 1",
-    overallScore: 61, skinType: "Dry",
-    concerns: ["Severe dryness", "Redness", "Flakiness"],
-    metrics: [
-      { id: "hydration",   label: "Hydration",  score: 55, icon: Droplets, color: "#5ba4cf" },
-      { id: "texture",     label: "Texture",    score: 58, icon: Zap,      color: "#b8c9a3" },
-      { id: "brightness",  label: "Brightness", score: 60, icon: Sun,      color: "#f5c9b3" },
-      { id: "protection",  label: "Protection", score: 50, icon: Shield,   color: "#c9a3b8" },
-      { id: "sensitivity", label: "Sensitivity",score: 72, icon: Heart,    color: "#f0a090" },
-    ],
-  },
-  {
-    id: 4, label: "Mar 10",
-    overallScore: 58, skinType: "Dry",
-    concerns: ["Severe dryness", "Sensitivity", "Redness"],
-    metrics: [
-      { id: "hydration",   label: "Hydration",  score: 48, icon: Droplets, color: "#5ba4cf" },
-      { id: "texture",     label: "Texture",    score: 55, icon: Zap,      color: "#b8c9a3" },
-      { id: "brightness",  label: "Brightness", score: 57, icon: Sun,      color: "#f5c9b3" },
-      { id: "protection",  label: "Protection", score: 48, icon: Shield,   color: "#c9a3b8" },
-      { id: "sensitivity", label: "Sensitivity",score: 68, icon: Heart,    color: "#f0a090" },
-    ],
-  },
-];
+// ── [تغيير 1] عنوان الباك ──────────────────────────────
+const API_URL = "http://127.0.0.1:8000/api";
+
+// ── [تغيير 2] تحوّل بيانات الـ API للشكل الصح ──────────
+function normalizeEntry(raw) {
+  return {
+    id:           raw.id,
+    label:        new Date(raw.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    overallScore: raw.overall_score,
+    skinType:     raw.skin_type,
+    concerns:     (raw.concerns || []).map(c => c.tag || c),
+    metrics:      raw.metrics || [],
+  };
+}
 
 /* ── Helpers ── */
 function scoreColor(score) {
@@ -102,7 +65,7 @@ function ScanDropdown({ label, selected, options, onChange }) {
   );
 }
 
-/* ── Score arc card ── */
+/* ── Score card ── */
 function ScoreCard({ scan, side }) {
   const color = scoreColor(scan.overallScore);
   const r = 28;
@@ -131,6 +94,7 @@ function ScoreCard({ scan, side }) {
 function MetricCompareRow({ metricId, before, after }) {
   const bMetric = before.metrics.find(m => m.id === metricId);
   const aMetric = after.metrics.find(m => m.id === metricId);
+  if (!bMetric || !aMetric) return null;
   const diff = aMetric.score - bMetric.score;
 
   return (
@@ -140,7 +104,6 @@ function MetricCompareRow({ metricId, before, after }) {
         <DiffBadge diff={diff} />
       </div>
       <div className="compare-bars">
-        {/* Before bar */}
         <div className="bar-group">
           <span className="bar-side-label">Before</span>
           <div className="bar-track">
@@ -148,7 +111,6 @@ function MetricCompareRow({ metricId, before, after }) {
           </div>
           <span className="bar-score">{bMetric.score}</span>
         </div>
-        {/* After bar */}
         <div className="bar-group">
           <span className="bar-side-label">After</span>
           <div className="bar-track">
@@ -163,13 +125,71 @@ function MetricCompareRow({ metricId, before, after }) {
 
 /* ── Main ── */
 export default function BeforeAfterPage({ onBack }) {
-  const [beforeScan, setBeforeScan] = useState(MOCK_SCANS[3]); // oldest
-  const [afterScan,  setAfterScan]  = useState(MOCK_SCANS[0]); // latest
+  // ── [تغيير 3] استبدلنا MOCK_SCANS بـ state تجيب من الـ API ──
+  const [scans, setScans]       = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
+  const [beforeScan, setBeforeScan] = useState(null);
+  const [afterScan,  setAfterScan]  = useState(null);
 
-  const scoreDiff    = afterScan.overallScore - beforeScan.overallScore;
-  const metricIds    = ["hydration", "texture", "brightness", "protection", "sensitivity"];
+  // ── [تغيير 4] نجيب كل التحليلات من الـ API لما الصفحة تفتح ──
+  useEffect(() => {
+    const fetchScans = async () => {
+      try {
+        const response = await fetch(`${API_URL}/analyses`);
+        const data = await response.json();
 
-  // concerns: gained vs resolved
+        if (data.success && data.data.length >= 2) {
+          const normalized = data.data.map(normalizeEntry);
+          setScans(normalized);
+          // الأحدث = after، الأقدم = before
+          setAfterScan(normalized[0]);
+          setBeforeScan(normalized[normalized.length - 1]);
+        } else if (data.data.length < 2) {
+          setError("You need at least 2 analyses to compare.");
+        }
+      } catch (err) {
+        setError("Failed to load analyses. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchScans();
+  }, []);
+
+  // ── Loading state ──
+  if (loading) {
+    return (
+      <div className="ba-root">
+        <div className="ba-header">
+          <button className="back-btn" onClick={onBack}><ArrowLeft size={18} /></button>
+          <div><h1 className="ba-title">Before / After</h1></div>
+        </div>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#7a6e6a" }}>
+          Loading analyses...
+        </div>
+      </div>
+    );
+  }
+
+  // ── Error state ──
+  if (error || !beforeScan || !afterScan) {
+    return (
+      <div className="ba-root">
+        <div className="ba-header">
+          <button className="back-btn" onClick={onBack}><ArrowLeft size={18} /></button>
+          <div><h1 className="ba-title">Before / After</h1></div>
+        </div>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#c0644e" }}>
+          {error || "Not enough data to compare."}
+        </div>
+      </div>
+    );
+  }
+
+  const scoreDiff        = afterScan.overallScore - beforeScan.overallScore;
+  const metricIds        = ["hydration", "texture", "brightness", "protection", "sensitivity"];
   const resolvedConcerns = beforeScan.concerns.filter(c => !afterScan.concerns.includes(c));
   const newConcerns      = afterScan.concerns.filter(c => !beforeScan.concerns.includes(c));
 
@@ -192,19 +212,19 @@ export default function BeforeAfterPage({ onBack }) {
         <ScanDropdown
           label="Before"
           selected={beforeScan}
-          options={MOCK_SCANS.filter(s => s.id !== afterScan.id)}
+          options={scans.filter(s => s.id !== afterScan.id)}
           onChange={setBeforeScan}
         />
         <div className="swap-icon"><ArrowLeftRight size={18} /></div>
         <ScanDropdown
           label="After"
           selected={afterScan}
-          options={MOCK_SCANS.filter(s => s.id !== beforeScan.id)}
+          options={scans.filter(s => s.id !== beforeScan.id)}
           onChange={setAfterScan}
         />
       </div>
 
-      {/* Score comparison hero */}
+      {/* Score comparison */}
       <div className="scores-hero">
         <ScoreCard scan={beforeScan} side="before" />
         <div className="scores-divider">

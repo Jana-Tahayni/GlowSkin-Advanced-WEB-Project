@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Clock, TrendingUp, TrendingDown, Minus,
   ChevronDown, ChevronUp, Droplets, Sun,
@@ -6,73 +6,23 @@ import {
 } from "lucide-react";
 import "./HistoryPage.css";
 
-/* ── Mock history data ── */
-const MOCK_HISTORY = [
-  {
-    id: 1,
-    date: "2025-05-10",
-    label: "Today",
-    overallScore: 74,
-    skinType: "Combination",
-    thumbnail: null,
-    concerns: ["T-zone oiliness", "Minor pores"],
-    metrics: [
-      { id: "hydration",   label: "Hydration",  score: 82, color: "#5ba4cf" },
-      { id: "texture",     label: "Texture",    score: 68, color: "#b8c9a3" },
-      { id: "brightness",  label: "Brightness", score: 71, color: "#f5c9b3" },
-      { id: "protection",  label: "Protection", score: 60, color: "#c9a3b8" },
-      { id: "sensitivity", label: "Sensitivity",score: 79, color: "#f0a090" },
-    ],
-  },
-  {
-    id: 2,
-    date: "2025-04-22",
-    label: "Apr 22",
-    overallScore: 68,
-    skinType: "Combination",
-    thumbnail: null,
-    concerns: ["T-zone oiliness", "Dryness", "Dullness"],
-    metrics: [
-      { id: "hydration",   label: "Hydration",  score: 74, color: "#5ba4cf" },
-      { id: "texture",     label: "Texture",    score: 61, color: "#b8c9a3" },
-      { id: "brightness",  label: "Brightness", score: 65, color: "#f5c9b3" },
-      { id: "protection",  label: "Protection", score: 55, color: "#c9a3b8" },
-      { id: "sensitivity", label: "Sensitivity",score: 80, color: "#f0a090" },
-    ],
-  },
-  {
-    id: 3,
-    date: "2025-04-01",
-    label: "Apr 1",
-    overallScore: 61,
-    skinType: "Dry",
-    thumbnail: null,
-    concerns: ["Severe dryness", "Redness", "Flakiness"],
-    metrics: [
-      { id: "hydration",   label: "Hydration",  score: 55, color: "#5ba4cf" },
-      { id: "texture",     label: "Texture",    score: 58, color: "#b8c9a3" },
-      { id: "brightness",  label: "Brightness", score: 60, color: "#f5c9b3" },
-      { id: "protection",  label: "Protection", score: 50, color: "#c9a3b8" },
-      { id: "sensitivity", label: "Sensitivity",score: 72, color: "#f0a090" },
-    ],
-  },
-  {
-    id: 4,
-    date: "2025-03-10",
-    label: "Mar 10",
-    overallScore: 58,
-    skinType: "Dry",
-    thumbnail: null,
-    concerns: ["Severe dryness", "Sensitivity", "Redness"],
-    metrics: [
-      { id: "hydration",   label: "Hydration",  score: 48, color: "#5ba4cf" },
-      { id: "texture",     label: "Texture",    score: 55, color: "#b8c9a3" },
-      { id: "brightness",  label: "Brightness", score: 57, color: "#f5c9b3" },
-      { id: "protection",  label: "Protection", score: 48, color: "#c9a3b8" },
-      { id: "sensitivity", label: "Sensitivity",score: 68, color: "#f0a090" },
-    ],
-  },
-];
+// ── [تغيير 1] عنوان الباك ──────────────────────────────
+const API_URL = "http://127.0.0.1:8000/api";
+
+// ── [تغيير 2] دالة تحوّل بيانات الـ API للشكل الصح ────
+// الـ API يرجع: overall_score, skin_type, concerns:[{tag, severity}]
+// الـ component يحتاج: overallScore, skinType, concerns:["string"]
+function normalizeEntry(raw) {
+  return {
+    id:           raw.id,
+    date:         raw.created_at,
+    label:        new Date(raw.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    overallScore: raw.overall_score,
+    skinType:     raw.skin_type,
+    concerns:     (raw.concerns || []).map(c => c.tag || c),
+    metrics:      raw.metrics || [],
+  };
+}
 
 /* ── Score colour helper ── */
 function scoreColor(score) {
@@ -85,7 +35,7 @@ function scoreColor(score) {
 function Trend({ current, previous }) {
   if (!previous) return null;
   const diff = current - previous;
-  if (diff > 0) return <span className="trend up"><TrendingUp size={13} />{diff > 0 ? `+${diff}` : diff}</span>;
+  if (diff > 0) return <span className="trend up"><TrendingUp size={13} />{`+${diff}`}</span>;
   if (diff < 0) return <span className="trend down"><TrendingDown size={13} />{diff}</span>;
   return <span className="trend flat"><Minus size={13} />0</span>;
 }
@@ -112,18 +62,29 @@ function MiniRing({ score }) {
 }
 
 /* ── Timeline card ── */
-function TimelineCard({ entry, prevEntry, index }) {
+function TimelineCard({ entry, prevEntry, index, onDelete }) {
   const [expanded, setExpanded] = useState(index === 0);
+
+  // ── [تغيير 3] دالة حذف التحليل من الـ API ────────────
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`${API_URL}/analyses/${entry.id}`, {
+        method: "DELETE",
+      });
+      const data = await response.json();
+      if (data.success) onDelete(entry.id);
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
+  };
 
   return (
     <div className={`timeline-card ${index === 0 ? "latest" : ""}`}>
-      {/* connector dot */}
       <div className="timeline-dot-col">
         <div className={`timeline-dot ${index === 0 ? "dot-active" : ""}`} />
         <div className="timeline-line" />
       </div>
 
-      {/* card body */}
       <div className="timeline-body">
         <div className="timeline-header" onClick={() => setExpanded(!expanded)}>
           <div className="timeline-header-left">
@@ -164,8 +125,9 @@ function TimelineCard({ entry, prevEntry, index }) {
               ))}
             </div>
             <div className="timeline-actions">
-              <button className="tl-action-btn">View Full Report</button>
-              <button className="tl-action-btn danger"><Trash2 size={13} /> Delete</button>
+              <button className="tl-action-btn danger" onClick={handleDelete}>
+                <Trash2 size={13} /> Delete
+              </button>
             </div>
           </div>
         )}
@@ -174,14 +136,14 @@ function TimelineCard({ entry, prevEntry, index }) {
   );
 }
 
-/* ── Progress chart (simple bar chart) ── */
+/* ── Score chart ── */
 function ScoreChart({ history }) {
   const max = 100;
   const reversed = [...history].reverse();
   return (
     <div className="chart-wrap">
       <div className="chart-bars">
-        {reversed.map((entry, i) => (
+        {reversed.map((entry) => (
           <div key={entry.id} className="chart-bar-col">
             <span className="chart-score-label">{entry.overallScore}</span>
             <div className="chart-bar-track">
@@ -203,10 +165,87 @@ function ScoreChart({ history }) {
 
 /* ── Main ── */
 export default function HistoryPage({ onBack, onCompare }) {
-  const [history] = useState(MOCK_HISTORY);
+  // ── [تغيير 4] استبدلنا useState بـ useEffect يجيب البيانات من الـ API ──
+  const [history, setHistory]   = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
 
-  const latest  = history[0];
-  const oldest  = history[history.length - 1];
+  // ── [تغيير 5] نجيب البيانات من الـ API لما الصفحة تفتح ──
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await fetch(`${API_URL}/analyses`);
+        const data = await response.json();
+
+        if (data.success) {
+          // نحوّل كل سجل للشكل الصح
+          setHistory(data.data.map(normalizeEntry));
+        }
+      } catch (err) {
+        setError("Failed to load history. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHistory();
+  }, []);
+
+  // ── [تغيير 6] دالة تحذف التحليل من الـ state بعد الحذف من الـ API ──
+  const handleDelete = (id) => {
+    setHistory((prev) => prev.filter((h) => h.id !== id));
+  };
+
+  // ── Loading state ──
+  if (loading) {
+    return (
+      <div className="history-root">
+        <div className="history-header">
+          <button className="back-btn" onClick={onBack}><ArrowLeft size={18} /></button>
+          <div style={{flex:1}}>
+            <h1 className="history-title">Skin History</h1>
+            <p className="history-subtitle">Loading...</p>
+          </div>
+        </div>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#7a6e6a" }}>
+          Loading your analyses...
+        </div>
+      </div>
+    );
+  }
+
+  // ── Error state ──
+  if (error) {
+    return (
+      <div className="history-root">
+        <div className="history-header">
+          <button className="back-btn" onClick={onBack}><ArrowLeft size={18} /></button>
+          <h1 className="history-title">Skin History</h1>
+        </div>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#c0644e" }}>
+          {error}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Empty state ──
+  if (history.length === 0) {
+    return (
+      <div className="history-root">
+        <div className="history-header">
+          <button className="back-btn" onClick={onBack}><ArrowLeft size={18} /></button>
+          <h1 className="history-title">Skin History</h1>
+        </div>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#7a6e6a" }}>
+          No analyses yet. Upload a photo to get started!
+        </div>
+      </div>
+    );
+  }
+
+  const latest      = history[0];
+  const oldest      = history[history.length - 1];
   const improvement = latest.overallScore - oldest.overallScore;
 
   return (
@@ -269,6 +308,7 @@ export default function HistoryPage({ onBack, onCompare }) {
               entry={entry}
               prevEntry={history[i + 1] || null}
               index={i}
+              onDelete={handleDelete}
             />
           ))}
         </div>

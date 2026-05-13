@@ -10,11 +10,17 @@ import ResultsPage from "./ResultsPage";
 
 import "./UploadPage.css";
 
+// ── [تغيير 1] عنوان الباك ──────────────────────────────
+// بدل ما نكتب العنوان في كل مكان، نحطه هنا مرة وحدة
+const API_URL = "http://127.0.0.1:8000/api";
+
+// ── [تغيير 2] شيلنا الـ delay من الـ CHECKLIST ──────────
+// لأنه هلق الـ animation مرتبط بالـ API مش بـ setTimeout وهمي
 const CHECKLIST = [
-  { id: 1, label: "Image uploaded successfully",    defaultDone: true },
-  { id: 2, label: "Detecting skin features...",     defaultDone: false, delay: 1500 },
-  { id: 3, label: "Analyzing skin health...",       defaultDone: false, delay: 3000 },
-  { id: 4, label: "Generating recommendations...", defaultDone: false, delay: 4500 },
+  { id: 1, label: "Image uploaded successfully" },
+  { id: 2, label: "Detecting skin features..."  },
+  { id: 3, label: "Analyzing skin health..."    },
+  { id: 4, label: "Preparing your results..."   },
 ];
 
 export default function UploadPage({ onHistoryClick }) {
@@ -24,21 +30,62 @@ export default function UploadPage({ onHistoryClick }) {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [doneItems, setDoneItems]       = useState(new Set([1]));
 
+  // ── [تغيير 3] أضفنا state جديدة ──────────────────────
+  // results: تخزن النتائج الجاية من الـ API
+  // error:   تخزن رسالة الخطأ إذا فشل الـ API
+  const [results, setResults] = useState(null);
+  const [error, setError]     = useState(null);
+
   const handleImageChange = (data) => setImageData(data);
   const handleCapture     = (data) => setImageData(data);
 
-  const handleAnalyze = () => {
+  // ── [تغيير 4] handleAnalyze صار async ────────────────
+  // لأنه هلق بيتصل بالـ API وينتظر الرد
+  const handleAnalyze = async () => {
     setStep(2);
     setDoneItems(new Set([1]));
+    setError(null);
 
-    CHECKLIST.filter((c) => !c.defaultDone).forEach((item) => {
-      setTimeout(() => {
-        setDoneItems((prev) => new Set([...prev, item.id]));
-      }, item.delay);
-    });
+    try {
+      // نحرّك الـ checklist animation أثناء انتظار الـ API
+      setTimeout(() => setDoneItems((prev) => new Set([...prev, 2])), 1000);
+      setTimeout(() => setDoneItems((prev) => new Set([...prev, 3])), 2500);
 
-    // Transition to results after all checklist items finish
-    setTimeout(() => setStep(3), 5500);
+      // ── [تغيير 5] نستخرج الـ base64 من الصورة ────────
+      // الصورة من الـ UploadZone جاية بشكل "data:image/jpeg;base64,ABC123..."
+      // الـ API يحتاج بس الجزء بعد الفاصلة "ABC123..."
+      const base64Image = imageData.includes(",")
+        ? imageData.split(",")[1]
+        : imageData;
+
+      // ── [تغيير 6] نرسل الصورة للـ API ────────────────
+      // بدل setTimeout وهمي، هلق نرسل للباك الحقيقي
+      const response = await fetch(`${API_URL}/analyze`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: base64Image }),
+      });
+
+      const data = await response.json();
+
+      // إذا الـ API رجع error نرميه
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Analysis failed");
+      }
+
+      // ── [تغيير 7] نحفظ النتائج ───────────────────────
+      setResults(data.data);
+
+      // نكمل الـ checklist وننتقل للنتائج
+      setTimeout(() => setDoneItems((prev) => new Set([...prev, 4])), 500);
+      setTimeout(() => setStep(3), 1200);
+
+    } catch (err) {
+      // ── [تغيير 8] نعرض الخطأ ─────────────────────────
+      // إذا فشل الـ API نرجع لـ step 1 ونعرض رسالة خطأ
+      setError(err.message || "Something went wrong. Please try again.");
+      setStep(1);
+    }
   };
 
   const handleReset = () => {
@@ -46,6 +93,9 @@ export default function UploadPage({ onHistoryClick }) {
     setImageData(null);
     setSkinType(null);
     setDoneItems(new Set([1]));
+    // ── [تغيير 9] نمسح النتائج والخطأ عند الرجوع ───────
+    setResults(null);
+    setError(null);
   };
 
   return (
@@ -66,6 +116,13 @@ export default function UploadPage({ onHistoryClick }) {
 
         {/* Progress */}
         <ProgressSteps currentStep={step} />
+
+        {/* ── [تغيير 10] Error banner ─────────────────── */}
+        {error && (
+          <div className="error-banner">
+            ⚠️ {error}
+          </div>
+        )}
 
         {/* Card */}
         <div className="glass-card">
@@ -122,9 +179,11 @@ export default function UploadPage({ onHistoryClick }) {
           )}
 
           {step === 3 && (
+            // ── [تغيير 11] نمرر النتائج الحقيقية لـ ResultsPage
             <ResultsPage
               imageData={imageData}
               skinType={skinType}
+              results={results}
               onReset={handleReset}
             />
           )}
