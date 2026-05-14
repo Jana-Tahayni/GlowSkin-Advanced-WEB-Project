@@ -29,9 +29,9 @@ function normalizeResults(raw) {
 }
 
 const SEVERITY_STYLES = {
-  mild:     { bg: "#fef0ea", color: "#c0644e", border: "#f5c9b3" },
-  moderate: { bg: "#fff3cd", color: "#856404", border: "#ffc107" },
-  high:     { bg: "#fde8e8", color: "#b91c1c", border: "#f87171" },
+  mild:     { bg: "#EDE4DA", color: "#2A6B62", border: "#A8D4CC" },
+  moderate: { bg: "#F7F2EE", color: "#8B6450", border: "#DDD0C0" },
+  high:     { bg: "#F0D4CC", color: "#8B4A3A", border: "#D4907E" },
 };
 
 function ScoreRing({ score }) {
@@ -43,11 +43,11 @@ function ScoreRing({ score }) {
       <svg width="140" height="140" viewBox="0 0 140 140">
         <defs>
           <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#f0a090" />
-            <stop offset="100%" stopColor="#b8c9a3" />
+            <stop offset="0%" stopColor="#3D8C80" />
+            <stop offset="100%" stopColor="#A8D4CC" />
           </linearGradient>
         </defs>
-        <circle cx="70" cy="70" r={radius} fill="none" stroke="#f5c9b3" strokeWidth="10" opacity="0.35" />
+        <circle cx="70" cy="70" r={radius} fill="none" stroke="#DDD0C0" strokeWidth="10" opacity="0.4" />
         <circle cx="70" cy="70" r={radius} fill="none" stroke="url(#ring-grad)" strokeWidth="10"
           strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={offset}
           transform="rotate(-90 70 70)"
@@ -82,10 +82,8 @@ function MetricBar({ metric }) {
 
 export default function ResultsPage({ imageData, skinType, onReset, results: rawResults }) {
   const results = normalizeResults(rawResults);
-
-  // ── [تغيير 1] state لحالة الأزرار ──────────────────
-  const [copied, setCopied]     = useState(false); // عشان نعرض "Copied!" بعد النسخ
-  const [shareOpen, setShareOpen] = useState(false); // عشان نفتح/نقفل الـ share menu
+  const [copied, setCopied]       = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const printRef = useRef();
 
   if (!results) return null;
@@ -95,14 +93,8 @@ export default function ResultsPage({ imageData, skinType, onReset, results: raw
     results.overallScore >= 70 ? "Good" :
     results.overallScore >= 55 ? "Fair" : "Needs Care";
 
-  // ── [تغيير 2] دالة Save as PDF ──────────────────────
-  // نفتح print dialog — المستخدم يختار "Save as PDF" من الطابعة
-  const handleSavePDF = () => {
-    window.print();
-  };
+  const handleSavePDF = () => window.print();
 
-  // ── [تغيير 3] دالة Copy Link ─────────────────────────
-  // ننسخ نص ملخص النتائج للـ clipboard
   const handleCopyLink = async () => {
     const text = `🌿 GlowSkin Analysis Results
 ━━━━━━━━━━━━━━━━━━━━━
@@ -129,7 +121,6 @@ Analyzed by GlowSkin AI`;
     }
   };
 
-  // ── [تغيير 4] دالة Share via WhatsApp ───────────────
   const handleWhatsApp = () => {
     const text = encodeURIComponent(
       `🌿 My GlowSkin Results\n` +
@@ -175,7 +166,7 @@ Analyzed by GlowSkin AI`;
       {/* Metrics */}
       <div className="results-section">
         <h3 className="section-title">
-          <Zap size={16} style={{ color: "#f0a090" }} /> Skin Metrics
+          <Zap size={16} style={{ color: "#3D8C80" }} /> Skin Metrics
         </h3>
         <div className="metrics-list">
           {results.metrics.map((m) => <MetricBar key={m.id} metric={m} />)}
@@ -185,7 +176,7 @@ Analyzed by GlowSkin AI`;
       {/* Concerns */}
       <div className="results-section">
         <h3 className="section-title">
-          <AlertCircle size={16} style={{ color: "#f0a090" }} /> Detected Concerns
+          <AlertCircle size={16} style={{ color: "#3D8C80" }} /> Detected Concerns
         </h3>
         <div className="tags-wrap">
           {results.concerns.map((c) => {
@@ -203,7 +194,7 @@ Analyzed by GlowSkin AI`;
       {/* Consult */}
       <div className="results-section consult-section">
         <h3 className="section-title">
-          <Star size={16} style={{ color: "#f0a090" }} /> Want Expert Advice?
+          <Star size={16} style={{ color: "#3D8C80" }} /> Want Expert Advice?
         </h3>
         <p className="consult-text">
           Get personalised product recommendations and a detailed skin care routine from a certified dermatologist.
@@ -211,32 +202,27 @@ Analyzed by GlowSkin AI`;
         <button className="consult-btn">Consult a Specialist →</button>
       </div>
 
-      {/* ── [تغيير 5] Actions مع Share menu ─────────── */}
+      {/* Actions */}
       <div className="results-actions">
         <button className="action-btn primary" onClick={onReset}>
           <RotateCcw size={16} /> Analyze Again
         </button>
 
-        {/* Save as PDF */}
         <button className="action-btn secondary" onClick={handleSavePDF}>
           <Download size={16} /> Save Report
         </button>
 
-        {/* Share — يفتح dropdown */}
         <div className="share-wrap">
           <button className="action-btn secondary" onClick={() => setShareOpen(!shareOpen)}>
             <Share2 size={16} /> Share
           </button>
 
-          {/* ── [تغيير 6] Share dropdown menu ────────── */}
           {shareOpen && (
             <div className="share-menu">
-              {/* Copy text */}
               <button className="share-item" onClick={handleCopyLink}>
                 {copied ? <Check size={15} /> : <Copy size={15} />}
                 {copied ? "Copied!" : "Copy Results"}
               </button>
-              {/* WhatsApp */}
               <button className="share-item whatsapp" onClick={handleWhatsApp}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
