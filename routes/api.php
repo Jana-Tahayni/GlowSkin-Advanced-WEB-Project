@@ -21,6 +21,8 @@ Route::prefix('auth')->group(function () {
     // ── Google OAuth ─────────────────────────────────────────
     Route::get('google',                 [AuthController::class, 'redirectToGoogle']);
     Route::get('google/callback',        [AuthController::class, 'handleGoogleCallback']);
+    Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('reset-password',  [AuthController::class, 'resetPassword']);
 
     // ── Protected ────────────────────────────────────────────
     Route::middleware('auth:api')->group(function () {
@@ -36,6 +38,7 @@ Route::prefix('auth')->group(function () {
 */
 Route::post('/product',               [ProductController::class, 'analyze']);
 Route::post('/product/image',         [ProductController::class, 'analyzeImage']);
+
 Route::get('/products/history',       [ProductController::class, 'history']);
 Route::get('/products/history/{id}',  [ProductController::class, 'show']);
 Route::delete('/products/history/{id}', [ProductController::class, 'destroy']);

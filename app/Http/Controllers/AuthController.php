@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use OpenApi\Attributes as OA;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 
 #[OA\Info(title: "GlowSkin API", version: "1.0.0", description: "GlowSkin Advanced Web Project API Documentation")]
 #[OA\Server(url: "http://localhost:8000", description: "Local Server")]
@@ -345,7 +347,47 @@ class AuthController extends Controller
             new OA\Response(response: 403, description: "Pending email must be verified first"),
         ]
     )]
-    public function handleGoogleCallback(Request $request): JsonResponse
+    public function handleGoogleCallback(Request $request): \Illuminate\Http\RedirectResponse
+{
+    $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
+
+    try {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+    } catch (\Exception $e) {
+        // ✅ Consistent — all redirects go to /auth/google/callback
+        return redirect("{$frontendUrl}/auth/google/callback?error=google_failed");
+    }
+
+    $email = $googleUser->getEmail();
+
+    if (PendingUser::where('email', $email)->exists()) {
+        // ✅ Consistent
+        return redirect("{$frontendUrl}/auth/google/callback?error=pending_verification&email={$email}");
+    }
+
+    $nameParts = explode(' ', trim($googleUser->getName()), 2);
+    $firstName = $nameParts[0] ?? '';
+    $lastName  = $nameParts[1] ?? '';
+    $isNew     = !User::where('email', $email)->exists();
+
+    $user = User::updateOrCreate(
+        ['email' => $email],
+        [
+            'first_name'        => $firstName,
+            'last_name'         => $lastName,
+            'provider'          => 'google',
+            'provider_id'       => $googleUser->getId(),
+            'avatar'            => $googleUser->getAvatar(),
+            'password'          => Hash::make(Str::random(32)),
+            'email_verified_at' => now(),
+        ]
+    );
+
+    $token = $user->createToken('GlowApp Google Token')->accessToken;
+
+    return redirect("{$frontendUrl}/auth/google/callback?token={$token}&new=" . ($isNew ? '1' : '0'));
+}
+   /* public function handleGoogleCallback(Request $request): JsonResponse
     {
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
@@ -400,7 +442,7 @@ class AuthController extends Controller
                 'token_type'   => 'Bearer',
             ],
         ]);
-    }
+    }*/
 
     // =========================================================
     //  ME / LOGOUT
@@ -455,4 +497,139 @@ class AuthController extends Controller
             'created_at' => $user->created_at,
         ];
     }
+    // =========================================================
+//  FORGOT PASSWORD  (send reset link)
+// =========================================================
+
+#[OA\Post(
+    path: "/api/auth/forgot-password",
+    summary: "Send password reset link",
+    tags: ["Auth"],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["email"],
+            properties: [new OA\Property(property: "email", type: "string", example: "test@gmail.com")]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: "Reset link sent"),
+        new OA\Response(response: 422, description: "Validation error"),
+    ]
+)]
+public function forgotPassword(Request $request): JsonResponse
+{
+    $validator = Validator::make($request->all(), ['email' => 'required|email']);
+
+    if ($validator->fails()) {
+        return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+    }
+
+    // Always return success to avoid email enumeration
+    $user = User::where('email', $request->email)->first();
+
+    if ($user) {
+        // Delete any existing token for this email
+        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+        $token = Str::random(64);
+
+        DB::table('password_reset_tokens')->insert([
+            'email'      => $request->email,
+            'token'      => Hash::make($token),
+            'created_at' => now(),
+        ]);
+
+        $resetUrl = env('FRONTEND_URL', 'http://localhost:3000') . '/reset-password/' . $token . '?email=' . urlencode($request->email);
+
+        Mail::to($user->email)->send(new \App\Mail\ResetPasswordMail($user->first_name, $resetUrl));
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'If this email is registered, a password reset link has been sent.',
+    ]);
+}
+
+// =========================================================
+//  RESET PASSWORD  (submit new password)
+// =========================================================
+
+#[OA\Post(
+    path: "/api/auth/reset-password",
+    summary: "Reset password with token",
+    tags: ["Auth"],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["email", "token", "password", "password_confirmation"],
+            properties: [
+                new OA\Property(property: "email",                 type: "string", example: "test@gmail.com"),
+                new OA\Property(property: "token",                 type: "string"),
+                new OA\Property(property: "password",              type: "string", example: "NewPassword123"),
+                new OA\Property(property: "password_confirmation", type: "string", example: "NewPassword123"),
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: "Password reset successful"),
+        new OA\Response(response: 400, description: "Invalid or expired token"),
+        new OA\Response(response: 422, description: "Validation error"),
+    ]
+)]
+public function resetPassword(Request $request): JsonResponse
+{
+    $validator = Validator::make($request->all(), [
+        'email'     => 'required|email',
+        'token'     => 'required|string',
+        'password'  => 'required|string|min:8|confirmed|regex:/[a-zA-Z]/|regex:/[0-9]/',
+    ], [
+        'password.regex' => 'Password must contain at least one letter and one number.',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
+    }
+
+    $record = DB::table('password_reset_tokens')
+        ->where('email', $request->email)
+        ->first();
+
+    // Invalid token
+    if (!$record || !Hash::check($request->token, $record->token)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid password reset link.',
+        ], 400);
+    }
+
+    // Expired (60 minutes)
+    if (now()->diffInMinutes($record->created_at) > 60) {
+        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+        return response()->json([
+            'success' => false,
+            'message' => 'This password reset link has expired. Please request a new one.',
+        ], 400);
+    }
+
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user) {
+        return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+    }
+
+    $user->update(['password' => Hash::make($request->password)]);
+
+    // Delete the token so it can't be reused
+    DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+
+    // Revoke all existing tokens (force re-login)
+    $user->tokens()->delete();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Password reset successfully. Please log in with your new password.',
+    ]);
+}
 }

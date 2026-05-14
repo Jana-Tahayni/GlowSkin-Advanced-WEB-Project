@@ -17,7 +17,7 @@
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Register new user",
+                "summary": "Begin registration – sends verification email",
                 "operationId": "d764dd091cc4494ae0baf360b03319f3",
                 "requestBody": {
                     "required": true,
@@ -65,10 +65,76 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Account created successfully"
+                        "description": "Verification email sent"
                     },
                     "422": {
                         "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/auth/verify/{token}": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verify email via token",
+                "operationId": "36d301b6a4ae92ae361ed56308e91e3a",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Email verified, account created"
+                    },
+                    "410": {
+                        "description": "Token expired – new link sent or record deleted"
+                    },
+                    "404": {
+                        "description": "Token not found"
+                    }
+                }
+            }
+        },
+        "/api/auth/resend-verification": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Resend verification email",
+                "operationId": "ebc80e43415c03caa3d78f286c7ff426",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "test@gmail.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Verification email resent"
+                    },
+                    "422": {
+                        "description": "Not a pending email"
                     }
                 }
             }
@@ -110,6 +176,9 @@
                     },
                     "401": {
                         "description": "Invalid credentials"
+                    },
+                    "403": {
+                        "description": "Email not verified"
                     }
                 }
             }
@@ -119,11 +188,11 @@
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Get Google OAuth URL",
+                "summary": "Get Google OAuth redirect URL",
                 "operationId": "d9545bf39a43c7b6dad24d8b6b4bd67d",
                 "responses": {
                     "200": {
-                        "description": "Google redirect URL returned"
+                        "description": "Redirect URL returned"
                     }
                 }
             }
@@ -137,10 +206,13 @@
                 "operationId": "5793de99cbbfc80402e9b1663438cf52",
                 "responses": {
                     "200": {
-                        "description": "Login/Register via Google successful"
+                        "description": "Google login/register successful"
                     },
                     "400": {
                         "description": "Google authentication failed"
+                    },
+                    "403": {
+                        "description": "Pending email must be verified first"
                     }
                 }
             }
@@ -155,9 +227,6 @@
                 "responses": {
                     "200": {
                         "description": "User data returned"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
                     }
                 },
                 "security": [
@@ -176,10 +245,7 @@
                 "operationId": "69281b12abb272c76871f19cb17ca563",
                 "responses": {
                     "200": {
-                        "description": "Logged out successfully"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
+                        "description": "Logged out"
                     }
                 },
                 "security": [
@@ -194,7 +260,6 @@
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
-                "description": "Laravel Passport Bearer Token",
                 "bearerFormat": "Passport",
                 "scheme": "bearer"
             }
