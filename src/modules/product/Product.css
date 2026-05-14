@@ -456,3 +456,12 @@ select.input-field { cursor: pointer; }
 @media (max-width: 480px) {
   .ingredient-grid { grid-template-columns: 1fr; }
 }
+@media (max-width: 480px) {
+  .hero-inner { padding: 2.5rem 1.2rem; }
+  .hero-video-wrap { max-height: 220px; }
+
+   .hero-cta {
+    width: 100%;
+    justify-content: center;
+  }
+}

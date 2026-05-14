@@ -100,7 +100,7 @@ export default function App() {
                   Our AI matches it to your skin profile and surfaces
                   what truly matters — in seconds.
                 </p>
-                <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap",flexDirection:  "column",  }}>
                 <a href="#analyzer-form" className="hero-cta fade-up delay-3" style={{ minWidth: "200px" }}>
                   ✦ Start Analyzing
                 </a>
