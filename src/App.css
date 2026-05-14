@@ -452,3 +452,18 @@ select.input-field { cursor: pointer; }
 @media (max-width: 480px) {
   .ingredient-grid { grid-template-columns: 1fr; }
 }
+.nav-logout-btn {
+  background: none;
+  border: 1px solid rgba(200, 137, 110, 0.4);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: #8b4d3a;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: "Jost", sans-serif;
+  transition: all 0.2s;
+}
+.nav-logout-btn:hover {
+  background: #faf0eb;
+  border-color: #c8896e;
+}
