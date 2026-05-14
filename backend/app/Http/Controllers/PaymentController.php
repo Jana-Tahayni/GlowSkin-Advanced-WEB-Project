@@ -14,6 +14,21 @@ class PaymentController extends Controller
 {
     public function processPayment(Request $request)
     {
+        $analysisId = $request->analysis_id;
+        $checkId = $analysisId ?? 124;
+
+        // $alreadyPaid = \App\Models\Payment::where('analysis_id', $analysisId)
+        $alreadyPaid = \App\Models\Payment::where('analysis_id', $checkId)
+             ->where('status', 'paid')
+            ->exists();
+
+        if ($alreadyPaid) {
+        return response()->json([
+            'success' => false, 
+            'message' => 'This analysis has already been paid for.'
+        ], 400);
+        }
+        
         try {
             $stripeSecret = env('STRIPE_SECRET');
             
@@ -32,13 +47,21 @@ class PaymentController extends Controller
                     'enabled' => true,
                     'allow_redirects' => 'never' 
                 ],
+                'metadata' => [
+                'customer_email' => $request->email, 
+                'customer_name' => $request->name,
+                // 'analysis_id' => $request->analysis_id 
+                'analysis_id' => $checkId
+                ],
             ]);
             // if ($intent->status === 'succeeded') {
                 Payment::create([
+                    // TODO: Replace with user.id after linking Auth Context
                 // 'user_id' => auth()->id(), 
-                'user_id' => auth()->id() ?? 1,
+                'user_id' => auth()->id() ?? 2,
+                // TODO: Replace with analysis after linking Auth Context
                 // 'analysis_id' => $request->analysis_id, 
-                'analysis_id' => null,
+                'analysis_id' => 124,
                 'amount' => 29.00,
                 'currency' => 'USD',
                 'status' => 'pending',
@@ -46,12 +69,11 @@ class PaymentController extends Controller
                 'paid_at' => null,
                 ]);
             // }
-
             return response()->json([
-                'success' => true,
-                'message' => 'Payment Successful!',
-                'intent' => $intent
-            ]);
+            'success' => true,
+            'message' => 'Payment Intent Created Successfully'
+        ]);
+
 
         } catch (Exception $e) {
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);

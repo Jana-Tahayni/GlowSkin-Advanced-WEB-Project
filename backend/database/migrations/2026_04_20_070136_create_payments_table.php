@@ -12,7 +12,7 @@ return new class extends Migration
         $table->id();
         // $table->foreignId('user_id')->constrained()->onDelete('cascade');
         $table->unsignedBigInteger('user_id')->nullable();
-        // $table->foreignId('analysis_id')->constrained('skin_analyses')->onDelete('cascade');
+        // $table->foreignId('analysis_id')->unique()->constrained('skin_analyses')->onDelete('cascade');
         $table->unsignedBigInteger('analysis_id')->nullable();
         $table->decimal('amount', 10, 2);
         $table->string('currency', 3)->default('USD');

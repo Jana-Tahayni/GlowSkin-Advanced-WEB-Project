@@ -1,6 +1,7 @@
 import React from 'react';
-
-export default function NotifPanel({ notifications, onMarkAll, onViewAll }) {
+import axios from "axios";
+  
+export default function NotifPanel({ notifications, onMarkAll,onMarkAsRead, onViewAll }) {
   const unread = notifications.filter(n => !n.read).length;
   return (
     <div className="notif-panel">
@@ -13,7 +14,9 @@ export default function NotifPanel({ notifications, onMarkAll, onViewAll }) {
       </div>
       <div className="notif-list">
         {notifications.map(n => (
-          <div key={n.id} className={`notif-item ${!n.read ? "unread" : ""}`}>
+          <div key={n.id} className={`notif-item ${!n.read ? "unread" : ""}`}
+          onClick={() => onMarkAsRead(n.id, n.read)} 
+            style={{ cursor: "pointer" }}>
             <div className={`notif-icon ni-${n.type}`}>{n.icon}</div>
             <div className="notif-content">
               <div className="notif-title">{n.title}</div>

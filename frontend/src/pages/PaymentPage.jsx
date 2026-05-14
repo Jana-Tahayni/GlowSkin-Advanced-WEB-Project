@@ -2,41 +2,15 @@ import React, { useState } from "react";
 import CheckoutModal from "../components/payment/CheckoutModal"; 
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from '@stripe/react-stripe-js';
+import { formatDistanceToNow } from 'date-fns';
 const stripePromise = loadStripe("pk_test_51TNxqNJWsILRKYoL52STxCkMGsLWboNqspPIKVrVBxKpcLdIimwC3wcAJQi1LzeU50Z1aPO1lSUUkNKoMVyA6dmD00D2ERn6Bl");
 
 
-function PaymentPage({ addNotification, setPage }) {
+export default function PaymentPage({ setPage, refreshNotifs, addNotification }) {
   const [showModal, setShowModal] = useState(false);
   const [toast, setToast] = useState(false);
 
     const [loading, setLoading] = useState(false);
-//   const handlePay = async () => {
-//   setLoading(true);
-//   try {
-//     const res = await fetch("http://localhost:8000/api/checkout", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//         "Accept": "application/json", 
-//       },
-//     });
-
-//     const data = await res.json();
-
-//     if (!res.ok) {
-//       console.error("Backend Error:", data.error);
-//       alert("Error: " + data.error);
-//       return;
-//     }
-
-//     window.location.href = data.url;
-//   } catch (err) {
-//     console.error("Network or CORS Error:", err);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
 
   const handleSuccess = () => {
     setShowModal(false); 
@@ -47,12 +21,19 @@ function PaymentPage({ addNotification, setPage }) {
       icon: "🩺", 
       title: "Request Sent to Specialist", 
       message: "Your analysis is now being reviewed. Your personalized routine will be ready within 24 hours.", 
-      time: "Just now", 
+      time: Date.now(), 
       read: false 
     });
+
+    setTimeout(() => {
+        if (refreshNotifs) refreshNotifs(); 
+    }, 2000);
     setTimeout(() => setToast(false), 4500);
+
   };
 
+  // TODO
+  const currentAnalysisId = 125;
   return (
     <Elements stripe={stripePromise}>
     <>
@@ -100,7 +81,7 @@ function PaymentPage({ addNotification, setPage }) {
 
       </div>
 
-      {showModal && <CheckoutModal onClose={() => setShowModal(false)} onSuccess={handleSuccess} />}
+      {showModal && <CheckoutModal analysisId={currentAnalysisId} onClose={() => setShowModal(false)} onSuccess={handleSuccess} />}
       
       {toast && (
         <div className="toast">
@@ -113,4 +94,4 @@ function PaymentPage({ addNotification, setPage }) {
   );
 }
 
-export default PaymentPage;
+// export default PaymentPage;

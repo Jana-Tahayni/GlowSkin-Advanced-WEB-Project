@@ -3,7 +3,7 @@
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
-:root{
+/* :root{
   --cream:   #F5EFE6;
   --sand:    #E8D9C5;
   --ivory:   #FAF7F2;
@@ -17,7 +17,99 @@
   --muted:   #8A7060;
   --border:  rgba(74,52,38,0.12);
   --shadow:  0 2px 24px rgba(74,52,38,0.08);
+} */
+/* :root {
+  --cream:   #FEF9F5;
+  --sand:    #F8F0E6;
+  --ivory:   #FFFFFF;
+  --honey:   #B07D62;
+  --amber:   #D6A68A;
+  --caramel: #E4BCAD;
+  --gold:    #F2D5C4;
+  --nude:    #FBE6DB;
+  --brown:   #5C4033;
+  --coffee:  #3E2723;
+  --muted:   #9A8276;
+  --border:  rgba(176, 125, 98, 0.15);
+  --shadow:  0 8px 30px rgba(176, 125, 98, 0.08);
+} */
+/* 
+:root {
+  --cream:   #FFFAF7;
+  --sand:    #F8F0EB;
+  --ivory:   #FFFFFF;
+  --honey:   #B35C44;
+  --amber:   #D9886A;
+  --caramel: #E8B4A2;
+  --gold:    #F2D0C2;
+  --nude:    #FDE9E2;
+  --brown:   #63382D;
+  --coffee:  #4A261D;
+  --muted:   #9C7A71;
+  --border:  rgba(179, 92, 68, 0.1);
+  --shadow:  0 10px 30px rgba(99, 56, 45, 0.06);
+} */
+
+/* :root {
+  --cream:   #F4F9F9;
+  --sand:    #E0F2F1;
+  --ivory:   #FFFFFF;
+  --honey:   #00897B;
+  --amber:   #26A69A;
+  --caramel: #4DB6AC;
+  --gold:    #80CBC4;
+  --nude:    #B2DFDB;
+  --brown:   #263238;
+  --coffee:  #1A2327;
+  --muted:   #607D8B;
+  --border:  rgba(0, 137, 123, 0.1);
+  --shadow:  0 10px 30px rgba(38, 50, 56, 0.08);
+} */
+ 
+/* :root {
+  --cream:   #F4FAF9;
+  --sand:    #E3F2EF;
+  --ivory:   #FFFFFF;
+
+  --honey:   #00897B;
+  --amber:   #22A699;
+  --caramel: #59BDB3;
+  --gold:    #9DD8D2;
+
+  --nude:    #D4ECE8;
+
+  --brown:   #34454D;
+  --coffee:  #25343A;
+
+  --muted:   #6D8087;
+
+  --border:  rgba(0, 137, 123, 0.10);
+  --shadow:  0 12px 34px rgba(37, 52, 58, 0.08);
+} */
+
+:root {
+  --cream:   #FFF6F0;
+  --sand:    #F2E3D5;
+  --ivory:   #FFFFFF;
+
+  /* peach / aesthetic accent */
+  --honey:   #E89A7B;
+  --amber:   #F2B39A;
+  --caramel: #D9A38F;
+  --gold:    #F6C7A9;
+
+  --nude:    #EAD2C3;
+
+  /* warm brown tones */
+  --brown:   #5A4036;
+  --coffee:  #3A2A24;
+
+  --muted:   #8A6F66;
+
+  --border:  rgba(90, 64, 54, 0.10);
+  --shadow:  0 12px 34px rgba(58, 42, 36, 0.08);
 }
+
 
 body{font-family:'Jost',sans-serif;background:var(--ivory);color:var(--brown);}
 

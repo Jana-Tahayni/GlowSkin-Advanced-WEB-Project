@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NAV_LINKS } from "../../data/data";
-import NotifPanel from "./NotifPanel";
-import AllNotificationsModal from "./AllNotificationsModal";
+import NotifPanel from "../notifications/NotifPanel";
+import AllNotificationsModal from "../notifications/AllNotificationsModal";
 
-export default function Navbar({ active, setPage, notifications, setNotifications }) {
+export default function Navbar({ active, setPage, notifications, setNotifications, onMarkAsRead, onMarkAllRead }) {
   const [showNotif, setShowNotif] = useState(false);
   const [showAllNotif, setShowAllNotif] = useState(false);
   const panelRef = useRef(null);
@@ -46,7 +46,8 @@ export default function Navbar({ active, setPage, notifications, setNotification
               <div ref={panelRef}>
                 <NotifPanel
                   notifications={notifications}
-                  onMarkAll={() => setNotifications(p => p.map(n => ({ ...n, read: true })))}
+                  onMarkAll={onMarkAllRead} 
+                  onMarkAsRead={onMarkAsRead}
                   onViewAll={() => setShowAllNotif(true)}
                 />
                 
