@@ -70,8 +70,7 @@ h1, h2, h3, h4, h5 {
 .nav-links a.active { border-bottom: 1.5px solid var(--darkest); padding-bottom: 2px; }
 /* ── Hero redesign ── */
 .hero {
-  background: linear-gradient(135deg, var(--cream) 40%, var(--nude) 100%);
-  padding: 0;
+   padding: 0;
   position: relative;
   overflow: hidden;
   min-height: 92vh;
@@ -130,7 +129,9 @@ h1, h2, h3, h4, h5 {
 
 /* ── زر CTA ── */
 .hero-cta {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center; 
+  justify-content: center;
   padding: .9rem 2.2rem;
   background: var(--pop);
   color: #FFF8F5;

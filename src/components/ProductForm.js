@@ -8,7 +8,7 @@ const ProductForm = ({ onAnalyze, loading }) => {
   const [imgPreview,  setImgPreview]  = useState(null);
   const [imgFile,     setImgFile]     = useState(null); 
 
-  const canSubmit = (productName.trim() || imgFile) && skinType && !loading;
+  const canSubmit = (productName.trim() || imgFile)  && !loading;
 
   const handleRemoveImage = () => {
     setImgPreview(null);

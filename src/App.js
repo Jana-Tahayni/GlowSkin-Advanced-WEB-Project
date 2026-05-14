@@ -1,15 +1,11 @@
-// src/App.js
 import { useState } from "react";
 import "./App.css";
 import heroVideo from "./assets/hero2.mp4";
 
-import Navbar        from "./components/Navbar";
-import ProductForm   from "./components/ProductForm";
-import ResultsCard   from "./components/ResultsCard";
-import HistoryPage   from "./components/HistoryPage";
-import HistoryDetail from "./components/HistoryDetail";
+ import ProductForm from "./components/ProductForm";
+import ResultsCard from "./components/ResultsCard";
+import HistoryPage from "./components/HistoryPage";
 
-// ── مؤقت للاختبار — رح نشيله لما نربط الـ Login ──
 const TOKEN = "3|Zi6fOpUhwpeF0X3TQxjz3gmKCOEBn98BmyADLgr6db6e56cb";
 
 const authHeaders = {
@@ -18,10 +14,9 @@ const authHeaders = {
 };
 
 export default function App() {
-  const [page,       setPage]       = useState("analyzer");
-  const [loading,    setLoading]    = useState(false);
-  const [result,     setResult]     = useState(null);
-  const [selectedId, setSelectedId] = useState(null);
+  const [page,    setPage]    = useState("analyzer");
+  const [loading, setLoading] = useState(false);
+  const [result,  setResult]  = useState(null);
 
   const handleAnalyze = async ({ productName, skinType, imgPreview, imgFile }) => {
     setResult(null);
@@ -35,22 +30,22 @@ export default function App() {
 
         const res  = await fetch("/api/product/image", {
           method:  "POST",
-          headers: authHeaders,   // ← بدون Content-Type مع FormData
+          headers: authHeaders,
           body:    formData,
         });
         const data = await res.json();
-       setResult({
-        productName:        data.product_name,
-        imgPreview:         imgPreview,  
-        effectivenessScore: data.effectiveness_score,
-        safetyScore:        data.safety_score,
-        compatibilityScore: Math.round((data.effectiveness_score + data.safety_score) / 2),  
-        overallScore:       Math.round((data.effectiveness_score + data.safety_score) / 2),  
-        compatibility:      data.compatibility,
-        ingredients: data.key_ingredients ?? [],
-        warnings:           data.warnings ?? [],
-        verdict:            data.verdict,
-      });
+        setResult({
+          productName:        data.product_name,
+          imgPreview:         imgPreview,
+          effectivenessScore: data.effectiveness_score,
+          safetyScore:        data.safety_score,
+          compatibilityScore: Math.round((data.effectiveness_score + data.safety_score) / 2),
+          overallScore:       Math.round((data.effectiveness_score + data.safety_score) / 2),
+          compatibility:      data.compatibility,
+          ingredients:        data.key_ingredients ?? [],
+          warnings:           data.warnings ?? [],
+          verdict:            data.verdict,
+        });
 
       } else {
         const res  = await fetch("/api/product", {
@@ -61,11 +56,11 @@ export default function App() {
         const data = await res.json();
         setResult({
           productName:        data.product_name,
-          imgPreview:         imgPreview,  
+          imgPreview:         null,
           effectivenessScore: data.effectiveness_score,
           safetyScore:        data.safety_score,
-          compatibilityScore: Math.round((data.effectiveness_score + data.safety_score) / 2),  
-          overallScore:       Math.round((data.effectiveness_score + data.safety_score) / 2),  
+          compatibilityScore: Math.round((data.effectiveness_score + data.safety_score) / 2),
+          overallScore:       Math.round((data.effectiveness_score + data.safety_score) / 2),
           compatibility:      data.compatibility,
           ingredients:        data.key_ingredients ?? [],
           warnings:           data.warnings ?? [],
@@ -82,27 +77,12 @@ export default function App() {
 
   const handleReset = () => setResult(null);
 
-  const handleSelectHistory = (id) => {
-    setSelectedId(id);
-    setPage("historyDetail");
-  };
-
   return (
     <>
-      <Navbar page={page} setPage={setPage} />
-
+    
       {page === "history" && (
         <HistoryPage
           onBack={() => setPage("analyzer")}
-          onSelect={handleSelectHistory}
-          authHeaders={authHeaders}
-        />
-      )}
-
-      {page === "historyDetail" && (
-        <HistoryDetail
-          id={selectedId}
-          onBack={() => setPage("history")}
           authHeaders={authHeaders}
         />
       )}
@@ -121,11 +101,23 @@ export default function App() {
                   Our AI matches it to your skin profile and surfaces
                   what truly matters — in seconds.
                 </p>
-                <a href="#analyzer-form" className="hero-cta fade-up delay-3">
+                <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                <a href="#analyzer-form" className="hero-cta fade-up delay-3" style={{ minWidth: "200px" }}>
                   ✦ Start Analyzing
                 </a>
+                <button
+                      className="hero-cta fade-up delay-3"
+                      onClick={() => setPage("history")}
+                      style={{
+                        border:    "none",
+                        cursor:    "pointer",
+                        minWidth:  "200px",
+                      }}
+                    >
+                      🕐 History
+                    </button>
               </div>
-
+              </div>
               <div className="hero-video-wrap fade-up delay-2">
                 <video src={heroVideo} autoPlay loop muted playsInline className="hero-video" />
                 <div className="hero-video-overlay" />
