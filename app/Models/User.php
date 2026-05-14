@@ -8,7 +8,8 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, \Laravel\Passport\HasApiTokens;
+    // \Laravel\Passport\HasApiTokens
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
