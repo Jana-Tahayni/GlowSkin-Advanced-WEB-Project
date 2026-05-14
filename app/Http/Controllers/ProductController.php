@@ -17,16 +17,17 @@ class ProductController extends Controller
 
     public function analyze(AnalyzeProductRequest $request): JsonResponse
     {
-         $userId   = $request->user()->id;
-        $skinType = $request->input('skin_type') 
-                 ?? auth()->user()->skin_type;
-                 if (!$skinType) {
-            return response()->json(
-                ['message' => 'Please complete your skin profile first'],
-                422
-            );
-        }
-       
+                $user     = $request->user();           // ← مرة وحدة
+                $userId   = $user->id;
+                $skinType = $request->input('skin_type') ?? $user->skin_type;
+
+                if (!$skinType) {
+                    return response()->json(
+                        ['message' => 'Please complete your skin profile first'],
+                        422
+                    );
+                }
+                
 
         try {
             $result = $this->analyzerService->analyzeByName(
@@ -53,17 +54,17 @@ class ProductController extends Controller
 
     public function analyzeImage(AnalyzeImageRequest $request): JsonResponse
     {
-        $skinType = $request->input('skin_type')
-                    ?? auth()->user()->skin_type;
+       $user     = $request->user();            
+       $userId   = $user->id;
+    $skinType = $request->input('skin_type') ?? $user->skin_type;
 
-            if (!$skinType) {
-                return response()->json(
-                    ['message' => 'Please complete your skin profile first'],
-                    422
-                );
-            }
-        $userId   = $request->user()->id;
-
+    if (!$skinType) {
+        return response()->json(
+            ['message' => 'Please complete your skin profile first'],
+            422
+        );
+    }
+ 
         $file        = $request->file('image');
         $storedPath  = \Storage::disk('public')->putFile('product_images', $file);
         $base64Image = base64_encode(file_get_contents(\Storage::disk('public')->path($storedPath)));
