@@ -8,15 +8,15 @@ use RuntimeException;
 
 class ProductAnalyzerService
 {
-    private const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-    private const MODEL = 'llama-3.3-70b-versatile';
-    private const MAX_TOKENS = 2048;
+    private const API_URL  = 'https://api.anthropic.com/v1/messages';
+    private const MODEL    = 'claude-opus-4-5';
+    private const MAX_TOKENS = 1024;
 
     private string $apiKey;
 
     public function __construct()
     {
-        $this->apiKey = env('GROQ_API_KEY');
+        $this->apiKey = env('ANTHROPIC_API_KEY');
     }
 
     private const SYSTEM_PROMPT = "You are a professional cosmetic chemist and dermatologist.
@@ -34,62 +34,83 @@ Respond ONLY with this exact JSON structure:
     \"compatibility\": \"good or neutral or bad\",
     \"effectiveness_score\": 85,
     \"safety_score\": 90,
-    \"key_ingredients\": [\"ingredient1\", \"ingredient2\"],
+    \"key_ingredients\": [
+    {\"name\": \"ingredient name\", \"desc\": \"what it does\", \"status\": \"good or caution or bad\"},
+    {\"name\": \"ingredient name\", \"desc\": \"what it does\", \"status\": \"good or caution or bad\"}
+],
     \"warnings\": [\"warning1\"],
     \"verdict\": \"short summary\"
 }";
 
-        $raw = $this->callGroq($prompt);
+        $raw = $this->callClaude($prompt);
         return $this->parseResponse($raw);
     }
 
     public function analyzeByImage(string $base64Image, string $mimeType, string $skinType): array
     {
-        // Groq ما بيدعم صور مباشرة — نستخدم نص بديلاً مؤقتاً
-        $prompt = "Analyze a skincare product for someone with {$skinType} skin.
-Assume it's a general moisturizer and provide analysis.
+        $messages = [
+            [
+                'role'    => 'user',
+                'content' => [
+                    [
+                        'type'   => 'image',
+                        'source' => [
+                            'type'       => 'base64',
+                            'media_type' => $mimeType,
+                            'data'       => $base64Image,
+                        ],
+                    ],
+                    [
+                        'type' => 'text',
+                        'text' => "Analyze the ingredients in this skincare product image for someone with {$skinType} skin.
 
 Respond ONLY with this exact JSON structure:
 {
-    \"product_name\": \"Unknown Product\",
+    \"product_name\": \"product name if visible or Unknown Product\",
     \"compatibility\": \"good or neutral or bad\",
     \"effectiveness_score\": 85,
     \"safety_score\": 90,
-    \"key_ingredients\": [\"ingredient1\", \"ingredient2\"],
+    \"key_ingredients\": [
+    {\"name\": \"ingredient name\", \"desc\": \"what it does\", \"status\": \"good or caution or bad\"},
+    {\"name\": \"ingredient name\", \"desc\": \"what it does\", \"status\": \"good or caution or bad\"}
+],
     \"warnings\": [\"warning1\"],
     \"verdict\": \"short summary\"
-}";
+}",
+                    ],
+                ],
+            ],
+        ];
 
-        $raw = $this->callGroq($prompt);
+        $raw = $this->callClaude(null, $messages);
         return $this->parseResponse($raw);
     }
 
-    private function callGroq(string $prompt): array
+    private function callClaude(?string $prompt, ?array $messages = null): array
     {
+        // إذا مافي messages جاهزة، اعمل واحدة بسيطة من الـ prompt
+        if (!$messages) {
+            $messages = [
+                ['role' => 'user', 'content' => $prompt]
+            ];
+        }
+
         try {
             $response = Http::timeout(60)
                 ->withHeaders([
-                    'Authorization' => 'Bearer ' . $this->apiKey,
-                    'Content-Type'  => 'application/json',
+                    'x-api-key'         => $this->apiKey,
+                    'anthropic-version' => '2023-06-01',
+                    'Content-Type'      => 'application/json',
                 ])
                 ->post(self::API_URL, [
-                    'model'       => self::MODEL,
-                    'max_tokens'  => self::MAX_TOKENS,
-                    'temperature' => 0.1,
-                    'messages'    => [
-                        [
-                            'role'    => 'system',
-                            'content' => self::SYSTEM_PROMPT,
-                        ],
-                        [
-                            'role'    => 'user',
-                            'content' => $prompt,
-                        ],
-                    ],
+                    'model'      => self::MODEL,
+                    'max_tokens' => self::MAX_TOKENS,
+                    'system'     => self::SYSTEM_PROMPT,
+                    'messages'   => $messages,
                 ]);
 
             if ($response->failed()) {
-                Log::error('Groq API error', [
+                Log::error('Claude API error', [
                     'status' => $response->status(),
                     'body'   => $response->body(),
                 ]);
@@ -99,17 +120,17 @@ Respond ONLY with this exact JSON structure:
             return $response->json();
 
         } catch (\Exception $e) {
-            Log::error('Groq API call failed', ['message' => $e->getMessage()]);
+            Log::error('Claude API call failed', ['message' => $e->getMessage()]);
             throw new RuntimeException('AI service is temporarily unavailable');
         }
     }
 
     private function parseResponse(array $data): array
     {
-        $rawText = $data['choices'][0]['message']['content'] ?? null;
+        $rawText = $data['content'][0]['text'] ?? null;
 
         if (!$rawText) {
-            Log::error('Groq returned empty response', ['data' => $data]);
+            Log::error('Claude returned empty response', ['data' => $data]);
             throw new RuntimeException('AI returned empty response');
         }
 

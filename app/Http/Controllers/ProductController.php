@@ -18,6 +18,7 @@ class ProductController extends Controller
     public function analyze(AnalyzeProductRequest $request): JsonResponse
     {
         $skinType = $request->input('skin_type') ?? 'oily';
+        $userId   = $request->user()->id;
 
         try {
             $result = $this->analyzerService->analyzeByName(
@@ -29,7 +30,7 @@ class ProductController extends Controller
         }
 
         $record = ProductCheck::create([
-            'user_id'             => 5,
+            'user_id'             => $userId,
             'product_name'        => $request->input('product_name'),
             'effectiveness_score' => $result['effectiveness_score'] ?? 0,
             'safety_score'        => $result['safety_score'] ?? 0,
@@ -45,9 +46,10 @@ class ProductController extends Controller
     public function analyzeImage(AnalyzeImageRequest $request): JsonResponse
     {
         $skinType = $request->input('skin_type') ?? 'oily';
+        $userId   = $request->user()->id;
 
-        $file       = $request->file('image');
-        $storedPath = \Storage::disk('public')->putFile('product_images', $file);
+        $file        = $request->file('image');
+        $storedPath  = \Storage::disk('public')->putFile('product_images', $file);
         $base64Image = base64_encode(file_get_contents(\Storage::disk('public')->path($storedPath)));
         $mimeType    = $file->getMimeType();
 
@@ -59,7 +61,7 @@ class ProductController extends Controller
         }
 
         $record = ProductCheck::create([
-            'user_id'             => 5,
+            'user_id'             => $userId,
             'product_name'        => $result['product_name'] ?? 'Unknown Product',
             'image_path'          => $storedPath,
             'effectiveness_score' => $result['effectiveness_score'] ?? 0,
@@ -75,7 +77,9 @@ class ProductController extends Controller
 
     public function history(Request $request): JsonResponse
     {
-        $query = ProductCheck::where('user_id', 5)
+        $userId = $request->user()->id;
+
+        $query = ProductCheck::where('user_id', $userId)
                              ->orderBy('created_at', 'desc');
 
         if ($search = $request->query('search')) {
@@ -88,30 +92,34 @@ class ProductController extends Controller
         return response()->json($query->get(), 200);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(Request $request, int $id): JsonResponse
     {
         $record = ProductCheck::find($id);
+
         if (!$record) {
             return response()->json(['message' => 'Record not found'], 404);
         }
-        if ($record->user_id !== 5) {
+        if ($record->user_id !== $request->user()->id) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
+
         return response()->json($record, 200);
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(Request $request, int $id): JsonResponse
     {
         $record = ProductCheck::find($id);
+
         if (!$record) {
             return response()->json(['message' => 'Record not found'], 404);
         }
-        if ($record->user_id !== 5) {
+        if ($record->user_id !== $request->user()->id) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
         if ($record->image_path) {
             \Storage::disk('public')->delete($record->image_path);
         }
+
         $record->delete();
         return response()->json(null, 204);
     }
