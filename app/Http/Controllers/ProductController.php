@@ -17,8 +17,16 @@ class ProductController extends Controller
 
     public function analyze(AnalyzeProductRequest $request): JsonResponse
     {
-        $skinType = $request->input('skin_type') ?? 'oily';
-        $userId   = $request->user()->id;
+         $userId   = $request->user()->id;
+        $skinType = $request->input('skin_type') 
+                 ?? auth()->user()->skin_type;
+                 if (!$skinType) {
+            return response()->json(
+                ['message' => 'Please complete your skin profile first'],
+                422
+            );
+        }
+       
 
         try {
             $result = $this->analyzerService->analyzeByName(
@@ -45,7 +53,15 @@ class ProductController extends Controller
 
     public function analyzeImage(AnalyzeImageRequest $request): JsonResponse
     {
-        $skinType = $request->input('skin_type') ?? 'oily';
+        $skinType = $request->input('skin_type')
+                    ?? auth()->user()->skin_type;
+
+            if (!$skinType) {
+                return response()->json(
+                    ['message' => 'Please complete your skin profile first'],
+                    422
+                );
+            }
         $userId   = $request->user()->id;
 
         $file        = $request->file('image');

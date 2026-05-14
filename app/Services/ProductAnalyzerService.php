@@ -16,7 +16,7 @@ class ProductAnalyzerService
 
     public function __construct()
     {
-        $this->apiKey = env('ANTHROPIC_API_KEY');
+        $this->apiKey = env('ANTHROPIC_API_KEY-prod');
     }
 
     private const SYSTEM_PROMPT = "You are a professional cosmetic chemist and dermatologist.
