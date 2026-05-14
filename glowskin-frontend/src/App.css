@@ -183,12 +183,13 @@
   }
 }
 
-/* Wide container for History & Before/After pages */
+/* ── Wide container for History & Before/After pages ── */
 .wide-container {
   width: 95%;
   max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem 0;
+  background: #F7F2EE;
 }
 
 @media (max-width: 768px) {

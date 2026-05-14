@@ -23,31 +23,31 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  background: #f5e8e4;
+  background: #EDE4DA;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  color: #b8a09a;
+  color: #8B6450;
   transition: all 0.5s ease;
   font-size: 0.95rem;
 }
 
 .progress-step.active .step-circle {
-  background: linear-gradient(135deg, #f0a090 0%, #e8866e 100%);
+  background: linear-gradient(135deg, #3D8C80 0%, #2A6B62 100%);
   color: white;
-  box-shadow: 0 0 20px rgba(240,160,144,0.45);
+  box-shadow: 0 0 20px rgba(61, 140, 128, 0.45);
 }
 
 .progress-step.completed .step-circle {
-  background: linear-gradient(135deg, #b8c9a3 0%, #8fae72 100%);
+  background: linear-gradient(135deg, #5AADA0 0%, #3D8C80 100%);
   color: white;
 }
 
 .step-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #7a6e6a;
+  color: #8B6450;
   display: none;
 }
 
@@ -58,7 +58,7 @@
 .progress-line {
   width: 4rem;
   height: 0.25rem;
-  background: #f5c9b3;
+  background: #DDD0C0;
   border-radius: 9999px;
   transition: all 0.5s ease;
 }
@@ -68,5 +68,5 @@
 }
 
 .progress-line.active {
-  background: linear-gradient(90deg, #b8c9a3 0%, #f0a090 100%);
+  background: linear-gradient(90deg, #A8D4CC 0%, #3D8C80 100%);
 }

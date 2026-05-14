@@ -5,21 +5,21 @@
   box-sizing: border-box;
 }
 
-/* ── Theme variables (matches HeroSection) ── */
+/* ── Theme variables — Teal + Nude + Pink ── */
 :root {
-  --cream:    #fdf6f0;
-  --peach:    #f5c9b3;
-  --blush:    #f0a090;
-  --sage:     #b8c9a3;
-  --ink:      #1a1a1a;
-  --muted:    #7a6e6a;
-  --card-bg:  #fef0ea;
+  --cream:    #F7F2EE;
+  --peach:    #DDD0C0;
+  --blush:    #3D8C80;
+  --sage:     #5AADA0;
+  --ink:      #3D2A1E;
+  --muted:    #8B6450;
+  --card-bg:  #EDE4DA;
 }
 
 .page-bg {
   min-height: 100vh;
   width: 100%;
-  background: white;
+  background: #F7F2EE;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,10 +46,10 @@
   width: 4rem;
   height: 4rem;
   border-radius: 1rem;
-  background: linear-gradient(135deg, #f0a090 0%, #e8866e 100%);
+  background: linear-gradient(135deg, #3D8C80 0%, #2A6B62 100%);
   margin-bottom: 1rem;
   animation: float 3s ease-in-out infinite;
-  box-shadow: 0 8px 24px rgba(240,160,144,0.35);
+  box-shadow: 0 8px 24px rgba(61, 140, 128, 0.4);
 }
 
 .header-icon {
@@ -73,11 +73,11 @@
 
 /* ── Glass Card ── */
 .glass-card {
-  background: rgba(255, 252, 249, 0.88);
+  background: rgba(237, 228, 218, 0.88);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(245, 201, 179, 0.4);
+  border: 1px solid rgba(168, 212, 204, 0.4);
   border-radius: 1.5rem;
-  box-shadow: 0 25px 60px -12px rgba(240,160,144,0.15);
+  box-shadow: 0 25px 60px -12px rgba(61, 140, 128, 0.12);
   padding: 2rem;
   animation: fade-in-up 0.6s ease-out 0.2s both;
 }
@@ -108,7 +108,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: #fce4d6;
+  background: #A8D4CC;
   animation: pulse-ring 2s ease-in-out infinite;
 }
 
@@ -116,7 +116,7 @@
   position: absolute;
   inset: 0.5rem;
   border-radius: 50%;
-  background: white;
+  background: #F7F2EE;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,7 +132,7 @@
   position: absolute;
   width: 2rem;
   height: 2rem;
-  color: #e8866e;
+  color: #3D8C80;
 }
 
 .analyzing-title {
@@ -161,21 +161,21 @@
   gap: 0.75rem;
   padding: 0.75rem;
   border-radius: 0.75rem;
-  border: 1px solid rgba(245,201,179,0.3);
-  background: #fffaf7;
+  border: 1px solid rgba(168, 212, 204, 0.35);
+  background: #F7F2EE;
   transition: all 0.4s ease;
 }
 
 .progress-item.done {
-  background: #fef0ea;
-  border-color: #f5c9b3;
+  background: #EDE4DA;
+  border-color: #A8D4CC;
 }
 
 .progress-item-dot {
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
-  background: #e5e7eb;
+  background: #DDD0C0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -184,7 +184,7 @@
 }
 
 .progress-item.done .progress-item-dot {
-  background: #f0a090;
+  background: #3D8C80;
 }
 
 .progress-item-dot .dot-inner {
@@ -202,7 +202,7 @@
 }
 
 .progress-item.done .progress-item-text {
-  color: #c0644e;
+  color: #2A6B62;
 }
 
 /* ── Footer ── */
@@ -235,6 +235,7 @@
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
+
 /* ── History nav button ── */
 .history-nav-btn {
   display: inline-flex;
@@ -243,22 +244,22 @@
   margin-top: 0.75rem;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #c0644e;
-  background: #fef0ea;
-  border: 1px solid #f5c9b3;
+  color: #2A6B62;
+  background: #EDE4DA;
+  border: 1px solid #A8D4CC;
   border-radius: 999px;
   padding: 0.35rem 0.9rem;
   cursor: pointer;
   font-family: inherit;
   transition: background 0.15s;
 }
-.history-nav-btn:hover { background: #fce4d6; }
+.history-nav-btn:hover { background: #A8D4CC; color: #1E5048; }
 
-/* Error banner */
+/* ── Error banner ── */
 .error-banner {
-  background: #fce4d6;
-  border: 1px solid #f5c9b3;
-  color: #c0644e;
+  background: #F0D4CC;
+  border: 1px solid #B8685A;
+  color: #8B4A3A;
   border-radius: 0.875rem;
   padding: 0.875rem 1.25rem;
   font-size: 0.875rem;

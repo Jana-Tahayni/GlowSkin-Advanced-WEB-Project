@@ -1,0 +1,188 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "GlowSkin API",
+        "description": "AI-powered skin analysis API for GlowSkin application",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Local Development Server"
+        }
+    ],
+    "paths": {
+        "/api/analyses": {
+            "get": {
+                "tags": [
+                    "Skin Analysis"
+                ],
+                "summary": "Get all skin analyses",
+                "description": "Returns all skin analyses ordered by date (newest first)",
+                "operationId": "f0fb5abc31cc681330bbc81fe0fcde66",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/analyses/{id}": {
+            "get": {
+                "tags": [
+                    "Skin Analysis"
+                ],
+                "summary": "Get a specific skin analysis",
+                "description": "GET /api/analyses/{id}\r\nيجيب تحليل معين بالـ id",
+                "operationId": "c6049acd5096059784c00bf0187a67fb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Skin Analysis"
+                ],
+                "summary": "Delete a skin analysis",
+                "description": "DELETE /api/analyses/{id}\r\nيحذف تحليل معين",
+                "operationId": "58109eb72f15c4ef2820ec65f08c6e33",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted successfully"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                }
+            }
+        },
+        "/api/analyze": {
+            "post": {
+                "tags": [
+                    "Skin Analysis"
+                ],
+                "summary": "Analyze a skin photo",
+                "description": "Sends a base64 image to Claude AI for skin analysis and saves the result",
+                "operationId": "4ba4fb3976d723299b999eca1bfe961a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "image"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "description": "Base64 encoded image without data:image prefix",
+                                        "type": "string",
+                                        "example": "/9j/4AAQSkZJRgAB..."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Analysis created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/analyses/compare": {
+            "get": {
+                "tags": [
+                    "Skin Analysis"
+                ],
+                "summary": "Compare two skin analyses",
+                "description": "Returns two analyses with score difference for Before/After comparison",
+                "operationId": "fd3290725c17aebf49cc01b0320deca6",
+                "parameters": [
+                    {
+                        "name": "before",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "after",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "One or both analyses not found"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Skin Analysis",
+            "description": "Skin Analysis"
+        }
+    ]
+}
