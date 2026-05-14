@@ -5,10 +5,14 @@ import {
 } from "lucide-react";
 import "./BeforeAfterPage.css";
 
-// ── [تغيير 1] عنوان الباك ──────────────────────────────
 const API_URL = "http://127.0.0.1:8000/api";
 
-// ── [تغيير 2] تحوّل بيانات الـ API للشكل الصح ──────────
+// ── [تغيير 1] نفس الـ helper تبع HistoryPage ──
+const getAuthHeaders = () => ({
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${localStorage.getItem('token')}`
+});
+
 function normalizeEntry(raw) {
   return {
     id:           raw.id,
@@ -20,11 +24,10 @@ function normalizeEntry(raw) {
   };
 }
 
-/* ── Helpers ── */
 function scoreColor(score) {
-  if (score >= 75) return "#b8c9a3";
-  if (score >= 60) return "#f5c9b3";
-  return "#f0a090";
+  if (score >= 75) return "#5AADA0";
+  if (score >= 60) return "#C8B8A2";
+  return "#D4907E";
 }
 
 function DiffBadge({ diff }) {
@@ -33,7 +36,6 @@ function DiffBadge({ diff }) {
   return               <span className="diff-badge down"><TrendingDown size={11} /> {diff}</span>;
 }
 
-/* ── Scan selector dropdown ── */
 function ScanDropdown({ label, selected, options, onChange }) {
   const [open, setOpen] = useState(false);
   const ref = useRef();
@@ -65,7 +67,6 @@ function ScanDropdown({ label, selected, options, onChange }) {
   );
 }
 
-/* ── Score card ── */
 function ScoreCard({ scan, side }) {
   const color = scoreColor(scan.overallScore);
   const r = 28;
@@ -76,7 +77,7 @@ function ScoreCard({ scan, side }) {
     <div className={`score-card ${side}`}>
       <div className="score-card-ring-wrap">
         <svg width="72" height="72" viewBox="0 0 72 72">
-          <circle cx="36" cy="36" r={r} fill="none" stroke="#f5c9b3" strokeWidth="6" opacity="0.3" />
+          <circle cx="36" cy="36" r={r} fill="none" stroke="#DDD0C0" strokeWidth="6" opacity="0.4" />
           <circle cx="36" cy="36" r={r} fill="none" stroke={color} strokeWidth="6"
             strokeLinecap="round"
             strokeDasharray={circ}
@@ -90,7 +91,6 @@ function ScoreCard({ scan, side }) {
   );
 }
 
-/* ── Metric comparison row ── */
 function MetricCompareRow({ metricId, before, after }) {
   const bMetric = before.metrics.find(m => m.id === metricId);
   const aMetric = after.metrics.find(m => m.id === metricId);
@@ -123,30 +123,31 @@ function MetricCompareRow({ metricId, before, after }) {
   );
 }
 
-/* ── Main ── */
 export default function BeforeAfterPage({ onBack }) {
-  // ── [تغيير 3] استبدلنا MOCK_SCANS بـ state تجيب من الـ API ──
-  const [scans, setScans]       = useState([]);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState(null);
+  const [scans, setScans]           = useState([]);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState(null);
   const [beforeScan, setBeforeScan] = useState(null);
   const [afterScan,  setAfterScan]  = useState(null);
 
-  // ── [تغيير 4] نجيب كل التحليلات من الـ API لما الصفحة تفتح ──
+  // ── [تغيير 2] أضفنا الـ token للـ fetch ──
   useEffect(() => {
     const fetchScans = async () => {
       try {
-        const response = await fetch(`${API_URL}/analyses`);
+        const response = await fetch(`${API_URL}/analyses`, {
+          headers: getAuthHeaders(),
+        });
         const data = await response.json();
 
         if (data.success && data.data.length >= 2) {
           const normalized = data.data.map(normalizeEntry);
           setScans(normalized);
-          // الأحدث = after، الأقدم = before
           setAfterScan(normalized[0]);
           setBeforeScan(normalized[normalized.length - 1]);
-        } else if (data.data.length < 2) {
+        } else if (data.data && data.data.length < 2) {
           setError("You need at least 2 analyses to compare.");
+        } else {
+          setError("Failed to load analyses.");
         }
       } catch (err) {
         setError("Failed to load analyses. Please try again.");
@@ -158,7 +159,6 @@ export default function BeforeAfterPage({ onBack }) {
     fetchScans();
   }, []);
 
-  // ── Loading state ──
   if (loading) {
     return (
       <div className="ba-root">
@@ -166,14 +166,13 @@ export default function BeforeAfterPage({ onBack }) {
           <button className="back-btn" onClick={onBack}><ArrowLeft size={18} /></button>
           <div><h1 className="ba-title">Before / After</h1></div>
         </div>
-        <div style={{ textAlign: "center", padding: "3rem", color: "#7a6e6a" }}>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#8B6450" }}>
           Loading analyses...
         </div>
       </div>
     );
   }
 
-  // ── Error state ──
   if (error || !beforeScan || !afterScan) {
     return (
       <div className="ba-root">
@@ -181,7 +180,7 @@ export default function BeforeAfterPage({ onBack }) {
           <button className="back-btn" onClick={onBack}><ArrowLeft size={18} /></button>
           <div><h1 className="ba-title">Before / After</h1></div>
         </div>
-        <div style={{ textAlign: "center", padding: "3rem", color: "#c0644e" }}>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#B8685A" }}>
           {error || "Not enough data to compare."}
         </div>
       </div>
@@ -196,7 +195,6 @@ export default function BeforeAfterPage({ onBack }) {
   return (
     <div className="ba-root">
 
-      {/* Header */}
       <div className="ba-header">
         <button className="back-btn" onClick={onBack}>
           <ArrowLeft size={18} />
@@ -207,7 +205,6 @@ export default function BeforeAfterPage({ onBack }) {
         </div>
       </div>
 
-      {/* Scan selectors */}
       <div className="selectors-row">
         <ScanDropdown
           label="Before"
@@ -224,7 +221,6 @@ export default function BeforeAfterPage({ onBack }) {
         />
       </div>
 
-      {/* Score comparison */}
       <div className="scores-hero">
         <ScoreCard scan={beforeScan} side="before" />
         <div className="scores-divider">
@@ -234,10 +230,9 @@ export default function BeforeAfterPage({ onBack }) {
         <ScoreCard scan={afterScan} side="after" />
       </div>
 
-      {/* Metric bars */}
       <div className="section-card">
         <div className="section-title">
-          <Zap size={15} style={{ color: "#f0a090" }} />
+          <Zap size={15} style={{ color: "#3D8C80" }} />
           Metric Comparison
         </div>
         <div className="compare-list">
@@ -247,10 +242,9 @@ export default function BeforeAfterPage({ onBack }) {
         </div>
       </div>
 
-      {/* Concerns delta */}
       <div className="section-card">
         <div className="section-title">
-          <TrendingUp size={15} style={{ color: "#f0a090" }} />
+          <TrendingUp size={15} style={{ color: "#3D8C80" }} />
           Skin Changes
         </div>
         <div className="concerns-delta">

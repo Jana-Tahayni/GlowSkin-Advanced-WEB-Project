@@ -6,12 +6,14 @@ import {
 } from "lucide-react";
 import "./HistoryPage.css";
 
-// ── [تغيير 1] عنوان الباك ──────────────────────────────
 const API_URL = "http://127.0.0.1:8000/api";
 
-// ── [تغيير 2] دالة تحوّل بيانات الـ API للشكل الصح ────
-// الـ API يرجع: overall_score, skin_type, concerns:[{tag, severity}]
-// الـ component يحتاج: overallScore, skinType, concerns:["string"]
+// ── [تغيير 1] نجيب الـ token من localStorage بنفس الـ key تبع أفنان ──
+const getAuthHeaders = () => ({
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${localStorage.getItem('token')}`
+});
+
 function normalizeEntry(raw) {
   return {
     id:           raw.id,
@@ -24,14 +26,12 @@ function normalizeEntry(raw) {
   };
 }
 
-/* ── Score colour helper ── */
 function scoreColor(score) {
-  if (score >= 80) return "#b8c9a3";
-  if (score >= 65) return "#f5c9b3";
-  return "#f0a090";
+  if (score >= 80) return "#5AADA0";
+  if (score >= 65) return "#C8B8A2";
+  return "#D4907E";
 }
 
-/* ── Trend icon ── */
 function Trend({ current, previous }) {
   if (!previous) return null;
   const diff = current - previous;
@@ -40,7 +40,6 @@ function Trend({ current, previous }) {
   return <span className="trend flat"><Minus size={13} />0</span>;
 }
 
-/* ── Mini score ring ── */
 function MiniRing({ score }) {
   const r = 20;
   const circ = 2 * Math.PI * r;
@@ -49,7 +48,7 @@ function MiniRing({ score }) {
   return (
     <div className="mini-ring-wrap">
       <svg width="68" height="68" viewBox="0 0 52 52">
-        <circle cx="26" cy="26" r={r} fill="none" stroke="#f5c9b3" strokeWidth="5" opacity="0.35" />
+        <circle cx="26" cy="26" r={r} fill="none" stroke="#DDD0C0" strokeWidth="5" opacity="0.5" />
         <circle cx="26" cy="26" r={r} fill="none" stroke={color} strokeWidth="5"
           strokeLinecap="round"
           strokeDasharray={circ}
@@ -61,15 +60,15 @@ function MiniRing({ score }) {
   );
 }
 
-/* ── Timeline card ── */
 function TimelineCard({ entry, prevEntry, index, onDelete }) {
   const [expanded, setExpanded] = useState(index === 0);
 
-  // ── [تغيير 3] دالة حذف التحليل من الـ API ────────────
+  // ── [تغيير 2] أضفنا الـ token للـ Delete request ──
   const handleDelete = async () => {
     try {
       const response = await fetch(`${API_URL}/analyses/${entry.id}`, {
         method: "DELETE",
+        headers: getAuthHeaders(),
       });
       const data = await response.json();
       if (data.success) onDelete(entry.id);
@@ -136,7 +135,6 @@ function TimelineCard({ entry, prevEntry, index, onDelete }) {
   );
 }
 
-/* ── Score chart ── */
 function ScoreChart({ history }) {
   const max = 100;
   const reversed = [...history].reverse();
@@ -163,23 +161,24 @@ function ScoreChart({ history }) {
   );
 }
 
-/* ── Main ── */
 export default function HistoryPage({ onBack, onCompare }) {
-  // ── [تغيير 4] استبدلنا useState بـ useEffect يجيب البيانات من الـ API ──
-  const [history, setHistory]   = useState([]);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState(null);
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState(null);
 
-  // ── [تغيير 5] نجيب البيانات من الـ API لما الصفحة تفتح ──
+  // ── [تغيير 3] أضفنا الـ token للـ fetch ──
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch(`${API_URL}/analyses`);
+        const response = await fetch(`${API_URL}/analyses`, {
+          headers: getAuthHeaders(),
+        });
         const data = await response.json();
 
         if (data.success) {
-          // نحوّل كل سجل للشكل الصح
           setHistory(data.data.map(normalizeEntry));
+        } else {
+          setError("Failed to load history.");
         }
       } catch (err) {
         setError("Failed to load history. Please try again.");
@@ -191,12 +190,10 @@ export default function HistoryPage({ onBack, onCompare }) {
     fetchHistory();
   }, []);
 
-  // ── [تغيير 6] دالة تحذف التحليل من الـ state بعد الحذف من الـ API ──
   const handleDelete = (id) => {
     setHistory((prev) => prev.filter((h) => h.id !== id));
   };
 
-  // ── Loading state ──
   if (loading) {
     return (
       <div className="history-root">
@@ -207,14 +204,13 @@ export default function HistoryPage({ onBack, onCompare }) {
             <p className="history-subtitle">Loading...</p>
           </div>
         </div>
-        <div style={{ textAlign: "center", padding: "3rem", color: "#7a6e6a" }}>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#8B6450" }}>
           Loading your analyses...
         </div>
       </div>
     );
   }
 
-  // ── Error state ──
   if (error) {
     return (
       <div className="history-root">
@@ -222,14 +218,13 @@ export default function HistoryPage({ onBack, onCompare }) {
           <button className="back-btn" onClick={onBack}><ArrowLeft size={18} /></button>
           <h1 className="history-title">Skin History</h1>
         </div>
-        <div style={{ textAlign: "center", padding: "3rem", color: "#c0644e" }}>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#B8685A" }}>
           {error}
         </div>
       </div>
     );
   }
 
-  // ── Empty state ──
   if (history.length === 0) {
     return (
       <div className="history-root">
@@ -237,7 +232,7 @@ export default function HistoryPage({ onBack, onCompare }) {
           <button className="back-btn" onClick={onBack}><ArrowLeft size={18} /></button>
           <h1 className="history-title">Skin History</h1>
         </div>
-        <div style={{ textAlign: "center", padding: "3rem", color: "#7a6e6a" }}>
+        <div style={{ textAlign: "center", padding: "3rem", color: "#8B6450" }}>
           No analyses yet. Upload a photo to get started!
         </div>
       </div>
@@ -251,7 +246,6 @@ export default function HistoryPage({ onBack, onCompare }) {
   return (
     <div className="history-root">
 
-      {/* Header */}
       <div className="history-header">
         <button className="back-btn" onClick={onBack}>
           <ArrowLeft size={18} />
@@ -266,7 +260,6 @@ export default function HistoryPage({ onBack, onCompare }) {
         </button>
       </div>
 
-      {/* Summary strip */}
       <div className="summary-strip">
         <div className="summary-item">
           <span className="summary-value">{latest.overallScore}</span>
@@ -274,7 +267,7 @@ export default function HistoryPage({ onBack, onCompare }) {
         </div>
         <div className="summary-divider" />
         <div className="summary-item">
-          <span className="summary-value" style={{ color: improvement >= 0 ? "#b8c9a3" : "#f0a090" }}>
+          <span className="summary-value" style={{ color: improvement >= 0 ? "#3D8C80" : "#D4907E" }}>
             {improvement >= 0 ? `+${improvement}` : improvement}
           </span>
           <span className="summary-label">Overall Progress</span>
@@ -286,19 +279,17 @@ export default function HistoryPage({ onBack, onCompare }) {
         </div>
       </div>
 
-      {/* Score chart */}
       <div className="section-card">
         <div className="section-title">
-          <TrendingUp size={15} style={{ color: "#f0a090" }} />
+          <TrendingUp size={15} style={{ color: "#3D8C80" }} />
           Score Over Time
         </div>
         <ScoreChart history={history} />
       </div>
 
-      {/* Timeline */}
       <div className="section-card">
         <div className="section-title">
-          <Clock size={15} style={{ color: "#f0a090" }} />
+          <Clock size={15} style={{ color: "#3D8C80" }} />
           Analysis Timeline
         </div>
         <div className="timeline">

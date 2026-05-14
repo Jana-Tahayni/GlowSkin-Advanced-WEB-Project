@@ -60,10 +60,15 @@ export default function UploadPage({ onHistoryClick }) {
 
       // ── [تغيير 6] نرسل الصورة للـ API ────────────────
       // بدل setTimeout وهمي، هلق نرسل للباك الحقيقي
-      const response = await fetch(`${API_URL}/analyze`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: base64Image }),
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(`${API_URL}/analyze`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ image: base64Image }),
       });
 
       const data = await response.json();
