@@ -1,11 +1,10 @@
 import { useState } from "react";
-import "./App.css";
-import heroVideo from "./assets/hero2.mp4";
+import "./modules/product/Product.css";
 
- import ProductForm from "./components/ProductForm";
-import ResultsCard from "./components/ResultsCard";
-import HistoryPage from "./components/HistoryPage";
-
+import heroVideo from "./modules/product/assets/hero2.mp4";
+import ProductForm from "./modules/product/components/ProductForm";
+import ResultsCard from "./modules/product/components/ResultsCard";
+import HistoryPage from "./modules/product/components/HistoryPage";
 const TOKEN = "3|Zi6fOpUhwpeF0X3TQxjz3gmKCOEBn98BmyADLgr6db6e56cb";
 
 const authHeaders = {
