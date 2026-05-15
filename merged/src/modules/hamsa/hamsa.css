@@ -1,38 +1,107 @@
+/* ═══════════════════════════════════════════════════════════
+   hamsa.css — همسة (Doctor Dashboard)
+   كل الستايل محصور داخل .hamsa-scope
+   ═══════════════════════════════════════════════════════════ */
+
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap');
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+.hamsa-scope {
+  --hm-cream:      #EDE0D0;
+  --hm-nude:       #D9BFAA;
+  --hm-accent:     #C4A98E;
+  --hm-dark:       #7A5C47;
+  --hm-darkest:    #2C1A0E;
+  --hm-mid:        #9E7B62;
+  --hm-light:      #F5EDE0;
+  --hm-pop:        #C0614A;
+  --hm-pop-light:  #F0DDD8;
+  --hm-warn:       #EDCFC8;
+  --hm-warn-border:#C0614A;
+  --hm-good:       #C8DBC6;
+  --hm-good-txt:   #2A5228;
+  --hm-shadow:     0 4px 24px rgba(44,26,14,0.10);
+  --hm-shadow-lg:  0 12px 48px rgba(44,26,14,0.18);
+  --hm-radius:     18px;
+  --hm-radius-sm:  10px;
 
-:root {
-  --cream:      #EDE0D0;
-  --nude:       #D9BFAA;
-  --accent:     #C4A98E;
-  --dark:       #7A5C47;
-  --darkest:    #2C1A0E;
-  --mid:        #9E7B62;
-  --light:      #F5EDE0;
-  --pop:        #C0614A;
-  --pop-light:  #F0DDD8;
-  --warn:       #EDCFC8;
-  --warn-border:#C0614A;
-  --good:       #C8DBC6;
-  --good-txt:   #2A5228;
-  --shadow:     0 4px 24px rgba(44,26,14,0.10);
-  --shadow-lg:  0 12px 48px rgba(44,26,14,0.18);
-  --radius:     18px;
-  --radius-sm:  10px;
-}
-
-body {
   font-family: 'DM Sans', sans-serif;
   background: #F5EDE0;
   color: #2C1A0E;
   min-height: 100vh;
+  display: flex;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+/* Sidebar */
+.hamsa-scope .sidebar {
+  width: 230px;
+  background: #2C1A0E;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  height: 100vh;
+  z-index: 100;
+}
+.hamsa-scope .sidebar-logo {
+  padding: 28px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.hamsa-scope .sidebar-logo-title {
+  font-family: 'Playfair Display', serif;
+  color: #EDE0D0; font-size: 18px; font-weight: 600; letter-spacing: 0.5px;
+}
+.hamsa-scope .sidebar-logo-sub {
+  color: #9E7B62; font-size: 11px; margin-top: 3px;
+  letter-spacing: 1.2px; text-transform: uppercase;
+}
+.hamsa-scope .sidebar-nav { padding: 20px 0; flex: 1; }
+.hamsa-scope .sidebar-section-label {
+  padding: 0 24px; margin-bottom: 4px;
+  font-size: 10px; color: #7A5C47;
+  letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+}
+.hamsa-scope .sidebar-nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 24px; cursor: pointer;
+  color: #9E7B62; font-size: 13.5px;
+  position: relative; transition: all 0.2s;
+  text-decoration: none;
+}
+.hamsa-scope .sidebar-nav-item:hover { color: #EDE0D0; background: rgba(192,97,74,0.10); }
+.hamsa-scope .sidebar-nav-item.active {
+  color: #EDE0D0; background: rgba(192,97,74,0.18);
+}
+.hamsa-scope .sidebar-active-line {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: #C0614A; border-radius: 0 3px 3px 0;
+}
+.hamsa-scope .sidebar-footer {
+  padding: 20px 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.hamsa-scope .sidebar-admin-badge { display: flex; align-items: center; gap: 10px; }
+.hamsa-scope .sidebar-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg,#C0614A,#9E7B62);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: #F5EDE0;
+}
+.hamsa-scope .sidebar-admin-name { font-size: 13px; color: #EDE0D0; font-weight: 500; }
+.hamsa-scope .sidebar-admin-role { font-size: 11px; color: #7A5C47; }
+
+/* Main content area */
+.hamsa-scope .hamsa-content {
+  margin-left: 230px;
+  flex: 1;
+  padding: 32px 36px;
+  min-height: 100vh;
+  background: var(--hm-light);
+}
+
+/* Typography inside hamsa */
+.hamsa-scope h1, .hamsa-scope h2, .hamsa-scope h3,
+.hamsa-scope h4, .hamsa-scope h5 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  color: var(--hm-darkest);
 }

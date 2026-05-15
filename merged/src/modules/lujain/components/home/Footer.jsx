@@ -3,7 +3,7 @@ import './footer.css';
 
 const Footer = ({ setPage }) => {
   return (
-    <footer className="footer-section">
+    <footer className="footer-section lujain-scope">
       <div className="footer-container">
         
         <div className="footer-brand">

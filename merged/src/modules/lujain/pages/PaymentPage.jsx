@@ -26,7 +26,7 @@ export default function PaymentPage({ setPage, refreshNotifs, addNotification, a
   };
 
   return (
-    <Elements stripe={stripePromise}>
+    <div className="lujain-scope"><Elements stripe={stripePromise}>
       <>
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "4.5rem 2rem 6rem" }}>
           <div style={{ textAlign: "center", maxWidth: "650px", margin: "0 auto 3.5rem" }}>
@@ -80,6 +80,6 @@ export default function PaymentPage({ setPage, refreshNotifs, addNotification, a
           </div>
         )}
       </>
-    </Elements>
+    </Elements></div>
   );
 }

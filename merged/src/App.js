@@ -16,7 +16,6 @@ import HeroSection     from "./components/HeroSection/HeroSection";
 import UploadPage      from "./pages/UploadPage";
 import HistoryPage     from "./pages/HistoryPage";
 import BeforeAfterPage from "./pages/BeforeAfterPage";
-import "./pages/UploadPage.css";
 
 // ── حلا: Product Analyzer ──
 import ProductForm        from "./modules/product/components/ProductForm";
@@ -31,12 +30,12 @@ import ResetPasswordPage              from "./modules/auth/ResetPasswordPage";
 
 // ── همسة: Doctor Dashboard (router-based, layout مستقل) ──
 import HamsaNavbar    from "./modules/hamsa/components/HamsaNavbar";
+import "./modules/hamsa/hamsa.css";
 import Dashboard      from "./modules/hamsa/pages/Dashboard";
 import PendingCases   from "./modules/hamsa/pages/PendingCases";
 import CaseReview     from "./modules/hamsa/pages/CaseReview";
 import RoutineBuilder from "./modules/hamsa/pages/RoutineBuilder";
 import RoutineDisplay from "./modules/hamsa/pages/RoutineDisplay";
-import "./modules/hamsa/hamsa.css";
 
 // ─────────────────────────────────────────────
 //  Product page hero styles (حلا)
@@ -67,15 +66,9 @@ const getToken = () => localStorage.getItem("token") || "";
 // ─────────────────────────────────────────────
 function HamsaLayout() {
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div className="hamsa-scope" style={{ display: "flex", minHeight: "100vh" }}>
       <HamsaNavbar />
-      <div style={{
-        marginLeft: "230px",
-        flex: 1,
-        padding: "32px 36px",
-        minHeight: "100vh",
-        background: "var(--light, #F5EDE0)"
-      }}>
+      <div className="hamsa-content">
         <Routes>
           <Route path="/"                element={<Dashboard />} />
           <Route path="/cases"           element={<PendingCases />} />
@@ -97,7 +90,32 @@ function AppShell() {
 
   useEffect(() => { window.scrollTo(0, 0); }, [page]);
 
-  const isLoggedIn = !!localStorage.getItem("token");
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
+
+  // تابع تغييرات الـ token (login/logout)
+  useEffect(() => {
+    const syncAuth = () => setIsLoggedIn(!!localStorage.getItem("token"));
+    window.addEventListener("storage", syncAuth);
+    // polling خفيف كل ثانية لأن storage event ما بشتغل بنفس الـ tab
+    const interval = setInterval(syncAuth, 1000);
+    return () => { window.removeEventListener("storage", syncAuth); clearInterval(interval); };
+  }, []);
+
+  // بعد Login — وجّه حسب الـ role أو الصفحة المحفوظة
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const userRaw  = localStorage.getItem("user");
+    const role     = userRaw ? JSON.parse(userRaw)?.role : null;
+    if (role === "doctor") {
+      navigate("/doctor");
+      return;
+    }
+    const redirect = sessionStorage.getItem("redirectAfterLogin");
+    if (redirect) {
+      sessionStorage.removeItem("redirectAfterLogin");
+      setPage(redirect);
+    }
+  }, [isLoggedIn]);
 
   const [notifications,     setNotifications]     = useState([]);
   const [currentAnalysisId, setCurrentAnalysisId] = useState(null);
@@ -190,7 +208,7 @@ function AppShell() {
       />
 
       <main>
-        {page === "home"     && <HomePage setPage={setPage} />}
+        {page === "home"     && <HomePage setPage={setPage} navigate={navigate} />}
 
         {page === "payment"  && (
           <PaymentPage setPage={setPage} analysisId={currentAnalysisId} refreshNotifs={fetchNotifications} addNotification={addNotification} />

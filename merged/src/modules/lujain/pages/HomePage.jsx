@@ -18,8 +18,21 @@ function HeroVisual() {
   );
 }
 
-function HomePage({ setPage }) {
+function HomePage({ setPage, navigate }) {
+  const isLoggedIn = !!localStorage.getItem("token");
+
+  // إذا مش logged in → احفظ الصفحة المطلوبة وروح للـ login
+  const handleProtectedNav = (targetPage) => {
+    if (!isLoggedIn) {
+      sessionStorage.setItem("redirectAfterLogin", targetPage);
+      if (navigate) navigate("/auth");
+    } else {
+      setPage(targetPage);
+    }
+  };
+
   return (
+    <div className="lujain-scope lujain-page">
     <>
       {/* Hero */}
       <div className="hero">
@@ -28,8 +41,12 @@ function HomePage({ setPage }) {
           <h1>Master your <em>routine</em> with AI precision.</h1>
           <p>Upload a photo, unlock your skin's secrets. From ingredient safety to expert doctor reviews, we provide the clarity you need for radiant skin.</p>
           <div className="hero-ctas">
-            <button className="btn btn-primary" onClick={() => setPage("analysis")}>Analyze My Skin — Free</button>
-            <button className="btn btn-outline" onClick={() => setPage("payment")}>See Plans</button>
+            <button className="btn btn-primary" onClick={() => handleProtectedNav("analysis")}>
+              Analyze My Skin — Free
+            </button>
+            <button className="btn btn-outline" onClick={() => handleProtectedNav("payment")}>
+              See Plans
+            </button>
           </div>
         </div>
         <HeroVisual />
@@ -63,7 +80,7 @@ function HomePage({ setPage }) {
             <div
               key={f.title}
               className="feature-card"
-              onClick={() => setPage(f.page)}
+              onClick={() => handleProtectedNav(f.page)}
               style={{ cursor: "pointer" }}
             >
               <div className="feat-icon">{f.icon}</div>
@@ -111,6 +128,7 @@ function HomePage({ setPage }) {
 
       <Footer setPage={setPage} />
     </>
+    </div>
   );
 }
 

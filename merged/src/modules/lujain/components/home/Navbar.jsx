@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import NotifPanel from "../notifications/NotifPanel";
 import AllNotificationsModal from "../notifications/AllNotificationsModal";
 
-// ── Navigation links — تربط كل صفحات البنات ──
+// الصفحات اللي تحتاج login
+const PROTECTED_PAGES = ["analysis", "product", "payment"];
+
 export const NAV_LINKS = [
   { id: "home",     label: "Home" },
   { id: "analysis", label: "Skin Analysis" },
@@ -16,6 +18,11 @@ export default function Navbar({ active, setPage, navigate, notifications = [], 
   const panelRef = useRef(null);
   const bellRef  = useRef(null);
   const unread   = notifications.filter(n => !n.read).length;
+
+  // قراءة الـ role من localStorage
+  const userRaw  = localStorage.getItem("user");
+  const userRole = userRaw ? JSON.parse(userRaw)?.role : null;
+  const isDoctor = isLoggedIn && userRole === "doctor";
 
   useEffect(() => {
     const handler = e => {
@@ -34,8 +41,22 @@ export default function Navbar({ active, setPage, navigate, notifications = [], 
     else setPage("home");
   };
 
+  const handleNavClick = (id) => {
+    // صفحة محمية والمستخدم مش logged in → احفظ الهدف وروح للـ login
+    if (PROTECTED_PAGES.includes(id) && !isLoggedIn) {
+      sessionStorage.setItem("redirectAfterLogin", id);
+      if (navigate) navigate("/auth");
+      return;
+    }
+    if (id === "doctor") {
+      if (navigate) navigate("/doctor");
+    } else {
+      setPage(id);
+    }
+  };
+
   return (
-    <nav className="nav">
+    <nav className="nav lujain-scope">
       <div className="nav-inner">
         <span className="logo" onClick={() => setPage("home")} style={{ cursor: "pointer" }}>
           <span className="logo-dot" />
@@ -43,18 +64,29 @@ export default function Navbar({ active, setPage, navigate, notifications = [], 
         </span>
 
         <ul className="nav-links">
+          {/* الصفحات العادية */}
           {NAV_LINKS.map(l => (
             <li key={l.id}>
               <button
                 className={`nav-link ${active === l.id ? "active" : ""}`}
-                onClick={() => setPage(l.id)}
+                onClick={() => handleNavClick(l.id)}
               >{l.label}</button>
             </li>
           ))}
+
+          {/* Doctor Dashboard — يظهر بس للدكتور */}
+          {isDoctor && (
+            <li>
+              <button
+                className="nav-link"
+                onClick={() => navigate("/doctor")}
+              >Doctor Dashboard</button>
+            </li>
+          )}
         </ul>
 
         <div className="nav-actions">
-          {/* Bell — فقط إذا logged in */}
+          {/* Bell — للمسجلين فقط */}
           {isLoggedIn && (
             <div style={{ position: "relative" }}>
               <button ref={bellRef} className="notif-btn"

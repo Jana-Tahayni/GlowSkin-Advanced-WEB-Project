@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
 
-:root {
+
+.product-page {
   /* ── Neutral / Base ── */
   --cream:      #F7F2EE;       /* Warm White — خلفية رئيسية */
   --nude:       #EDE4DA;       /* Nude Linen — كاردات */
@@ -41,16 +42,16 @@
   --light:      #F7F2EE;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
+
+.product-page {
   font-family: 'Jost', sans-serif;
   background: var(--light);
   color: var(--dark);
   min-height: 100vh;
 }
 
-h1, h2, h3, h4, h5 {
+.product-page h1, .product-page h2, .product-page h3, .product-page h4, .product-page h5 {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 400;
 }

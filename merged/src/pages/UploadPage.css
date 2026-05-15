@@ -1,20 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
-* {
-  font-family: 'Outfit', sans-serif;
-  box-sizing: border-box;
-}
 
 /* ── Theme variables — Teal + Nude + Pink ── */
-:root {
-  --cream:    #F7F2EE;
-  --peach:    #DDD0C0;
-  --blush:    #3D8C80;
-  --sage:     #5AADA0;
-  --ink:      #3D2A1E;
-  --muted:    #8B6450;
-  --card-bg:  #EDE4DA;
-}
+
 
 .page-bg {
   min-height: 100vh;
