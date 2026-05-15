@@ -1,6 +1,7 @@
 // src/components/ProductForm.js
 import { useState } from "react";
 import ImageUpload from "./ImageUpload";
+import "../Product.css";
 
 const ProductForm = ({ onAnalyze, loading }) => {
   const [productName, setProductName] = useState("");
