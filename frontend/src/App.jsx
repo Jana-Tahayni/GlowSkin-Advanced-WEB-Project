@@ -75,6 +75,13 @@ const markAsRead = async (id, isRead) => {
     return () => clearInterval(interval); 
   }, []);
 
+  const [currentAnalysisId, setCurrentAnalysisId] = useState(null);
+
+  //TODO
+  const handleAnalysisComplete = (id) => {
+    setCurrentAnalysisId(id);
+    setPage('payment'); 
+  };
   
   return (
     <div className="app-container">
@@ -94,6 +101,7 @@ const markAsRead = async (id, isRead) => {
 
           {page === "payment" && (
           <Payment 
+            analysisId={currentAnalysisId}
             setPage={setPage} 
             refreshNotifs={fetchNotifications} 
             addNotification={addNotification} 

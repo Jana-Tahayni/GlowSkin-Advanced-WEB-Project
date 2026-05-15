@@ -113,6 +113,7 @@ const CheckoutModal = ({ onClose, amount = 29, analysisId }) => {
             <input 
               className="form-input" 
               name="name"
+              //TODO
               placeholder="Lujain Rashid" 
               value={form.name} 
               onChange={handleInputChange} 
@@ -126,7 +127,8 @@ const CheckoutModal = ({ onClose, amount = 29, analysisId }) => {
               className="form-input" 
               name="email"
               type="email" 
-              placeholder="lujain@example.com" 
+              //TODO
+              placeholder="example@gmail.com" 
               value={form.email} 
               onChange={handleInputChange} 
               required

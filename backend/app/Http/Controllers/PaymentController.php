@@ -9,9 +9,43 @@ use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\PaymentIntent; 
 use Exception;
+use OpenApi\Attributes as OA;
 
 class PaymentController extends Controller
 {
+
+#[OA\Post(
+        path: "/api/process-payment",
+        summary: "Process a Stripe Payment",
+        tags: ["Payments"],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["payment_method_id", "email", "name"],
+                properties: [
+                    new OA\Property(property: "analysis_id", type: "integer", example: 124),
+                    new OA\Property(property: "payment_method_id", type: "string", example: "pm_12345"),
+                    new OA\Property(property: "email", type: "string", example: "user@example.com"),
+                    new OA\Property(property: "name", type: "string", example: "Ahmed Mohamed")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Payment Intent Created Successfully",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "success", type: "boolean", example: true),
+                        new OA\Property(property: "message", type: "string", example: "Payment Intent Created Successfully")
+                    ]
+                )
+            ),
+            new OA\Response(response: 400, description: "Analysis already paid"),
+            new OA\Response(response: 401, description: "Unauthorized"),
+            new OA\Response(response: 500, description: "Server Error")
+        ]
+    )]
     public function processPayment(Request $request)
     {
         $analysisId = $request->analysis_id;

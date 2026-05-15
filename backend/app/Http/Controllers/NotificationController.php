@@ -3,9 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class NotificationController extends Controller
 {
+    #[OA\Get(
+        path: "/api/notifications",
+        summary: "Get all notifications for the user",
+        tags: ["Notifications"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "List of notifications",
+                content: new OA\JsonContent(type: "array", items: new OA\Items())
+            )
+        ]
+    )]
     public function index()
     {
 
@@ -20,6 +33,30 @@ class NotificationController extends Controller
         // return response()->json($notifications);
     }
 
+    #[OA\Post(
+        path: "/api/notifications/{id}/read",
+        summary: "Mark a specific notification as read",
+        tags: ["Notifications"],
+        parameters: [
+            new OA\Parameter(
+                name: "id",
+                in: "path",
+                required: true,
+                description: "The ID of the notification",
+                schema: new OA\Schema(type: "string")
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Notification marked as read",
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: "success", type: "boolean", example: true)
+                ])
+            ),
+            new OA\Response(response: 404, description: "Notification not found")
+        ]
+    )]
     public function markAsRead($id)
     {
         //
@@ -41,6 +78,22 @@ class NotificationController extends Controller
         }
         return response()->json(['success' => false, 'message' => 'Notification not found'], 404);
     }
+
+    #[OA\Post(
+        path: "/api/notifications/read-all",
+        summary: "Mark all unread notifications as read",
+        tags: ["Notifications"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "All notifications marked as read",
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: "success", type: "boolean", example: true)
+                ])
+            ),
+            new OA\Response(response: 404, description: "User not found")
+        ]
+    )]
     public function markAllRead() {
 
         $user = \App\Models\User::where('role', 'user')->first();

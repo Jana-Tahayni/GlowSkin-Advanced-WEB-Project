@@ -4,8 +4,13 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\NotificationController;
 
-// Route::post('/checkout', [PaymentController::class, 'checkout']);
+/**
+ * @route   POST /api/process-payment
+ * @desc    Handle the payment process via Stripe and record pending transactions.
+ * @access  Public (or Authenticated)
+ */
 Route::post('/process-payment', [PaymentController::class, 'processPayment']);
+
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']);
 
 

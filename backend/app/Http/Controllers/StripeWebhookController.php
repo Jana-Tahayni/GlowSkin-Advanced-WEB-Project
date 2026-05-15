@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\NewCaseReceived;
 use App\Models\User;
+use OpenApi\Attributes as OA;
 // class StripeWebhookController extends Controller
 // {
 //     //
@@ -32,6 +33,32 @@ use App\Models\User;
 // }
 class StripeWebhookController extends Controller
 {
+    #[OA\Post(
+        path: "/api/stripe/webhook",
+        summary: "Stripe Webhook Listener",
+        description: "Handles incoming events from Stripe, such as successful payments, and triggers notifications.",
+        tags: ["Payments"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Webhook handled successfully",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "status", type: "string", example: "success")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Invalid payload or signature",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "error", type: "string", example: "Invalid signature")
+                    ]
+                )
+            )
+        ]
+    )]
     public function handleWebhook(Request $request)
     {
         $payload = $request->getContent();

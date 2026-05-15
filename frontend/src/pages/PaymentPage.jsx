@@ -6,7 +6,7 @@ import { formatDistanceToNow } from 'date-fns';
 const stripePromise = loadStripe("pk_test_51TNxqNJWsILRKYoL52STxCkMGsLWboNqspPIKVrVBxKpcLdIimwC3wcAJQi1LzeU50Z1aPO1lSUUkNKoMVyA6dmD00D2ERn6Bl");
 
 
-export default function PaymentPage({ setPage, refreshNotifs, addNotification }) {
+export default function PaymentPage({ setPage, refreshNotifs, addNotification, analysisId }) {
   const [showModal, setShowModal] = useState(false);
   const [toast, setToast] = useState(false);
 
@@ -33,7 +33,7 @@ export default function PaymentPage({ setPage, refreshNotifs, addNotification })
   };
 
   // TODO
-  const currentAnalysisId = 125;
+  // const currentAnalysisId = 125;
   return (
     <Elements stripe={stripePromise}>
     <>
@@ -81,7 +81,7 @@ export default function PaymentPage({ setPage, refreshNotifs, addNotification })
 
       </div>
 
-      {showModal && <CheckoutModal analysisId={currentAnalysisId} onClose={() => setShowModal(false)} onSuccess={handleSuccess} />}
+      {showModal && <CheckoutModal analysisId={analysisId} onClose={() => setShowModal(false)} onSuccess={handleSuccess} />}
       
       {toast && (
         <div className="toast">
