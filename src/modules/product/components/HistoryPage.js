@@ -59,7 +59,7 @@ const HistoryPage = ({ onBack, authHeaders }) => {
 
       <div className="image-placeholder" style={{ height: 450, marginBottom: "1.6rem" }}>
         <img
-          src="https://i.pinimg.com/1200x/b5/d1/f5/b5d1f5dc846c127de60f3b3316567607.jpg"
+          src="https://i.pinimg.com/736x/89/1e/96/891e961cad11969c79772b205977b74b.jpg"
           alt="History Visual"
           style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }}
         />
