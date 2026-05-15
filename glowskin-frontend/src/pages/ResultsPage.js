@@ -95,6 +95,12 @@ export default function ResultsPage({ imageData, skinType, onReset, results: raw
 
   const handleSavePDF = () => window.print();
 
+  // ── [تغيير] كبسة Consult ترسل الـ analysis_id للجين ──
+  const handleConsult = () => {
+    const analysisId = rawResults?.id;
+    window.location.href = `/payment?analysis_id=${analysisId}`;
+  };
+
   const handleCopyLink = async () => {
     const text = `🌿 GlowSkin Analysis Results
 ━━━━━━━━━━━━━━━━━━━━━
@@ -199,7 +205,10 @@ Analyzed by GlowSkin AI`;
         <p className="consult-text">
           Get personalised product recommendations and a detailed skin care routine from a certified dermatologist.
         </p>
-        <button className="consult-btn">Consult a Specialist →</button>
+        {/* ── [تغيير] أضفنا onClick يمرر الـ analysis_id لصفحة لجين ── */}
+        <button className="consult-btn" onClick={handleConsult}>
+          Consult a Specialist →
+        </button>
       </div>
 
       {/* Actions */}
