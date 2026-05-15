@@ -9,13 +9,13 @@ use App\Http\Controllers\NotificationController;
  * @desc    Handle the payment process via Stripe and record pending transactions.
  * @access  Public (or Authenticated)
  */
-Route::post('/process-payment', [PaymentController::class, 'processPayment']);
-
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']);
 
-
-// Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:api')->group(function () {
+    
+    Route::post('/process-payment', [PaymentController::class, 'processPayment']);
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
-// });
+    
+});

@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
-
+use Illuminate\Support\Facades\Auth;
 class NotificationController extends Controller
 {
     #[OA\Get(
         path: "/api/notifications",
         summary: "Get all notifications for the user",
         tags: ["Notifications"],
+        security: [["bearerAuth" => []]],
         responses: [
             new OA\Response(
                 response: 200,
@@ -22,21 +23,19 @@ class NotificationController extends Controller
     public function index()
     {
 
-        $user = \App\Models\User::where('role', 'user')->first();
+        $user = Auth::guard('api')->user();
 
         if ($user) {
             return response()->json($user->notifications);
         }
-
-        return response()->json([]);
-        // return response()->json(auth()->user()->notifications);
-        // return response()->json($notifications);
+        return response()->json([], 401);
     }
 
     #[OA\Post(
         path: "/api/notifications/{id}/read",
         summary: "Mark a specific notification as read",
         tags: ["Notifications"],
+        security: [["bearerAuth" => []]],
         parameters: [
             new OA\Parameter(
                 name: "id",
@@ -59,20 +58,18 @@ class NotificationController extends Controller
     )]
     public function markAsRead($id)
     {
-        //
-        $user = \App\Models\User::where('role', 'user')->first();
+        $user = Auth::guard('api')->user();
 
         if (!$user) {
             return response()->json(['success' => false], 404);
         }
 
-        // $notification = $user->notifications()->find($id);
         $notification = $user->notifications()->where('id', $id)->first();
         //
         // $notification = auth()->user()->notifications()->find($id);
 
         if($notification) {
-            // $notification->markAsRead();
+            $notification->markAsRead();
             $notification->update(['read_at' => now()]);
             return response()->json(['success' => true]);
         }
@@ -83,6 +80,7 @@ class NotificationController extends Controller
         path: "/api/notifications/read-all",
         summary: "Mark all unread notifications as read",
         tags: ["Notifications"],
+        security: [["bearerAuth" => []]],
         responses: [
             new OA\Response(
                 response: 200,
@@ -96,10 +94,10 @@ class NotificationController extends Controller
     )]
     public function markAllRead() {
 
-        $user = \App\Models\User::where('role', 'user')->first();
+        $user = Auth::guard('api')->user();
 
         if (!$user) {
-            return response()->json(['success' => false], 404);
+            return response()->json(['success' => false], 401);
         }
 
         $user->unreadNotifications->markAsRead();

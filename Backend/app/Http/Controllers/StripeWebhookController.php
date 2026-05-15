@@ -11,26 +11,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\NewCaseReceived;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use OpenApi\Attributes as OA;
-// class StripeWebhookController extends Controller
-// {
-//     //
-// public function handleWebhook(Request $request) {
-//     $payload = $request->all();
-//     $type = $payload['type'];
 
-//     if ($type === 'payment_intent.succeeded') {
-//         $intent = $payload['data']['object'];
-        
-//         Payment::where('stripe_id', $intent['id'])->update([
-//             'status' => 'paid',
-//             'paid_at' => now(),
-//         ]);
-//     }
-
-//     return response()->json(['status' => 'success']);
-// }
-// }
 class StripeWebhookController extends Controller
 {
     #[OA\Post(
@@ -82,7 +65,7 @@ class StripeWebhookController extends Controller
         if ($event->type === 'payment_intent.succeeded') {
             $intent = $event->data->object;
 
-            $analysisId = $intent->metadata->analysis_id ?? 123;
+            $analysisId = $intent->metadata->analysis_id;
             $payment = Payment::where('stripe_id', $intent->id)->first();
 
             if ($payment) {

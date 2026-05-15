@@ -18,6 +18,7 @@ class PaymentController extends Controller
         path: "/api/process-payment",
         summary: "Process a Stripe Payment",
         tags: ["Payments"],
+        security: [["bearerAuth" => []]],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -48,11 +49,16 @@ class PaymentController extends Controller
     )]
     public function processPayment(Request $request)
     {
-        $analysisId = $request->analysis_id;
-        $checkId = $analysisId ?? 124;
+        $request->validate([
+            'analysis_id' => 'required|integer',
+            'payment_method_id' => 'required|string',
+            'email' => 'required|email',
+            'name' => 'required|string',
+        ]);
 
-        // $alreadyPaid = \App\Models\Payment::where('analysis_id', $analysisId)
-        $alreadyPaid = \App\Models\Payment::where('analysis_id', $checkId)
+        $analysisId = $request->analysis_id;
+
+        $alreadyPaid = \App\Models\Payment::where('analysis_id', $analysisId)
              ->where('status', 'paid')
             ->exists();
 
@@ -84,18 +90,13 @@ class PaymentController extends Controller
                 'metadata' => [
                 'customer_email' => $request->email, 
                 'customer_name' => $request->name,
-                // 'analysis_id' => $request->analysis_id 
-                'analysis_id' => $checkId
+                'analysis_id' => $analysisId
                 ],
             ]);
             // if ($intent->status === 'succeeded') {
                 Payment::create([
-                    // TODO: Replace with user.id after linking Auth Context
-                // 'user_id' => auth()->id(), 
-                'user_id' => auth()->id() ?? 2,
-                // TODO: Replace with analysis after linking Auth Context
-                // 'analysis_id' => $request->analysis_id, 
-                'analysis_id' => 124,
+                'user_id' => Auth::guard('api')->id(), 
+                'analysis_id' => $analysisId,
                 'amount' => 29.00,
                 'currency' => 'USD',
                 'status' => 'pending',
