@@ -10,7 +10,7 @@ use OpenApi\Attributes as OA;
     securityScheme: "bearerAuth",
     type: "http",
     scheme: "bearer",
-    bearerFormat: "Token"   
+    bearerFormat: "Token"
 )]
 abstract class Controller
 {
