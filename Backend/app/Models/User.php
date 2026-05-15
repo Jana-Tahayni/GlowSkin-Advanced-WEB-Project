@@ -2,19 +2,19 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+
 class User extends Authenticatable
 {
-      use HasApiTokens;
+    use HasApiTokens;
     use HasFactory, Notifiable;
 
     protected $fillable = [
-       'first_name',
+        'first_name',
         'last_name',
         'email',
         'password',
@@ -22,6 +22,8 @@ class User extends Authenticatable
         'provider_id',
         'avatar',
         'email_verified_at',
+        'role',
+        'skin_type',
     ];
 
     protected $hidden = [
@@ -37,10 +39,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function getFullNameAttribute():string {
-        return "{$this->first_name}  {$this->last_name}";
+
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
     }
-    public function isSocialUser():bool{
-        return $this->provider !=='email';
+
+    public function isSocialUser(): bool
+    {
+        return $this->provider !== 'email';
     }
 }

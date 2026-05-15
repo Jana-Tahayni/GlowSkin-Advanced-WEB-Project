@@ -1,10 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SkinAnalysisController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,4 +52,18 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/analyses/compare',    [SkinAnalysisController::class, 'compare']);
     Route::get('/analyses/{id}',       [SkinAnalysisController::class, 'show']);
     Route::delete('/analyses/{id}',    [SkinAnalysisController::class, 'destroy']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Payment and Notifications Routes (Lujain)
+|--------------------------------------------------------------------------
+*/
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::post('/process-payment',          [PaymentController::class, 'processPayment']);
+    Route::get('/notifications',             [NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/read',  [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all',   [NotificationController::class, 'markAllRead']);
 });
