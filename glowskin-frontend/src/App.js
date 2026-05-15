@@ -15,8 +15,29 @@ import "./App.css";
 
 const getToken = () => localStorage.getItem("token") || "";
 
-// ── CSS لصفحة حلا — محمية من تأثير على بقية الصفحات ──
 const productHeroStyles = `
+  /* ── Reset global styles that affect Hala's page ── */
+  .product-page h1 {
+    font-size: clamp(2.4rem, 4vw, 3.8rem) !important;
+    letter-spacing: normal !important;
+    margin: 0 0 1.2rem !important;
+    font-family: 'Cormorant Garamond', serif !important;
+    font-weight: 400 !important;
+  }
+  .product-page h2 {
+    font-size: 1.9rem !important;
+    letter-spacing: normal !important;
+    margin: 0 0 1.8rem !important;
+    font-family: 'Cormorant Garamond', serif !important;
+    font-weight: 400 !important;
+  }
+  .product-page {
+    text-align: left !important;
+    font-family: 'Jost', sans-serif !important;
+    font-size: 1rem !important;
+  }
+
+  /* ── Hero ── */
   .product-hero {
     padding: 0;
     position: relative;
@@ -48,10 +69,12 @@ const productHeroStyles = `
     margin-bottom: 1.2rem;
   }
   .product-hero-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: clamp(2.4rem, 4vw, 3.8rem) !important;
     line-height: 1.1; color: #3D2A1E;
-    margin-bottom: 1.2rem;
+    margin: 0 0 1.2rem !important;
+    letter-spacing: normal !important;
+    font-weight: 400 !important;
   }
   .product-hero-title em { font-style: italic; color: #2A6B62; }
   .product-hero-sub {
@@ -180,25 +203,10 @@ export default function App() {
   return (
     <div style={{ margin: 0, padding: 0, overflow: "hidden" }}>
 
-      {/* ── Inject product page CSS only once ── */}
-      <style>{productHeroStyles}</style>
-
       {/* ── صفحة Jana (Skin Analysis) ── */}
       {page === "home" && (
         <>
-          {/* زر مؤقت لصفحة حلا — رح يتشال لما الNavbar يندمج */}
-          <button
-            onClick={() => setPage("product")}
-            style={{
-              position: "fixed", bottom: "20px", right: "20px",
-              zIndex: 9999, background: "#3D8C80", color: "white",
-              border: "none", borderRadius: "10px",
-              padding: "10px 20px", cursor: "pointer", fontSize: "14px"
-            }}
-          >
-            🧴 Product Analyzer
-          </button>
-
+          
           <HeroSection />
           <UploadPage
             onHistoryClick={() => setPage("history")}
@@ -242,7 +250,9 @@ export default function App() {
 
       {/* ── صفحة حلا (Product Analyzer) ── */}
       {page === "product" && (
-        <>
+        <div className="product-page">
+          <style>{productHeroStyles}</style>
+
           {productSubPage === "history" ? (
             <ProductHistoryPage
               onBack={() => setProductSubPage("analyzer")}
@@ -254,29 +264,26 @@ export default function App() {
                 <div className="product-hero-inner">
                   <div className="product-hero-text">
                     <p className="product-hero-eyebrow fade-up">AI-Powered · Ingredient Intelligence</p>
-                    <h1 className="product-hero-title fade-up">
+                    <h1 className="product-hero-title fade-up delay-1">
                       Analyze Your<br /><em>Skincare Product</em>
                     </h1>
-                    <p className="product-hero-sub fade-up">
+                    <p className="product-hero-sub fade-up delay-2">
                       Paste a product name or upload an ingredient label.
                       Our AI matches it to your skin profile and surfaces
                       what truly matters — in seconds.
                     </p>
                     <div style={{ display: "flex", gap: "1rem", flexDirection: "column" }}>
-                      <a href="#analyzer-form" className="product-hero-cta">
+                      <a href="#analyzer-form" className="product-hero-cta fade-up delay-3">
                         ✦ Start Analyzing
                       </a>
-                      <button className="product-hero-cta" onClick={() => setProductSubPage("history")}>
+                      <button className="product-hero-cta fade-up delay-3" onClick={() => setProductSubPage("history")}>
                         🕐 History
                       </button>
-                      <button className="product-hero-cta back" onClick={() => setPage("home")}>
-                        ← Back to Home
-                      </button>
+                     
                     </div>
                   </div>
 
-                  {/* ── فيديو حلا ── */}
-                  <div className="product-video-wrap fade-up">
+                  <div className="product-video-wrap fade-up delay-2">
                     <video src={heroVideo} autoPlay loop muted playsInline className="product-video" />
                     <div className="product-video-overlay" />
                   </div>
@@ -302,7 +309,7 @@ export default function App() {
               </div>
             </>
           )}
-        </>
+        </div>
       )}
 
     </div>

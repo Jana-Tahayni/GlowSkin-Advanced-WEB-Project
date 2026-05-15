@@ -24,9 +24,9 @@
   position: relative;
   min-height: 100vh;
   background-color: var(--hero-cream);
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  grid-template-areas: "copy photo";
+  display: grid !important;
+  grid-template-columns: 1fr 1.2fr !important;
+  grid-template-areas: "copy photo" !important;
   align-items: center;
   overflow: hidden;
   padding: calc(3rem + 80px) 4rem 3rem;

@@ -2,6 +2,7 @@ import CompatBadge from "./CompatBadge";
 import ScoreBar    from "./ScoreBar";
 import skincareImg from "../assets/skincare.jpg"; 
 import verdict from "../assets/verdict.jpg"; 
+
 const ResultsCard = ({ result }) => (
   
   <div className="fade-up">
