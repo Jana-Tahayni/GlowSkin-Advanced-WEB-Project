@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SkinAnalysis;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use OpenApi\Attributes as OA;
 
 class SkinAnalysisController extends Controller
@@ -29,7 +30,6 @@ class SkinAnalysisController extends Controller
     )]
     public function index(Request $request)
     {
-        // ── [تغيير 1] نجيب بس تحليلات اليوزر الحالي ──
         $analyses = SkinAnalysis::where('user_id', $request->user()->id)
                                 ->orderBy('created_at', 'desc')
                                 ->get();
@@ -54,7 +54,6 @@ class SkinAnalysisController extends Controller
     )]
     public function show(Request $request, $id)
     {
-        // ── [تغيير 2] نتأكد إن التحليل يرجع لليوزر الحالي ──
         $analysis = SkinAnalysis::where('id', $id)
                                 ->where('user_id', $request->user()->id)
                                 ->first();
@@ -103,11 +102,21 @@ class SkinAnalysisController extends Controller
             'image' => 'required|string',
         ]);
 
-        // 2. نرسل الصورة لـ Claude API ونحصل على النتائج
-        $results = $this->analyzeWithClaude($request->image);
+        // 2. احفظي الصورة على الـ disk
+        $imageData = $request->image;
 
-        // 3. نخزن النتائج مع user_id اليوزر الحالي
-        // ── [تغيير 3] نضيف user_id تلقائياً من الـ token ──
+        // إزالة الـ data:image prefix لو موجود
+        if (str_contains($imageData, ',')) {
+            $imageData = explode(',', $imageData)[1];
+        }
+
+        $fileName = 'skin_analyses/' . $request->user()->id . '_' . time() . '.jpg';
+        Storage::disk('public')->put($fileName, base64_decode($imageData));
+
+        // 3. أرسل الصورة لـ Claude
+        $results = $this->analyzeWithClaude($imageData);
+
+        // 4. احفظ النتائج مع الـ image_path
         $analysis = SkinAnalysis::create([
             'user_id'       => $request->user()->id,
             'overall_score' => $results['overall_score'],
@@ -115,10 +124,9 @@ class SkinAnalysisController extends Controller
             'summary'       => $results['summary'],
             'metrics'       => $results['metrics'],
             'concerns'      => $results['concerns'],
-            'image_path'    => null,
+            'image_path'    => $fileName, // ✅ محفوظ هلق
         ]);
 
-        // 4. نرجع النتائج للفرونت
         return response()->json([
             'success' => true,
             'data'    => $analysis,
@@ -139,7 +147,6 @@ class SkinAnalysisController extends Controller
     )]
     public function destroy(Request $request, $id)
     {
-        // ── [تغيير 4] نتأكد إن التحليل يرجع لليوزر الحالي قبل الحذف ──
         $analysis = SkinAnalysis::where('id', $id)
                                 ->where('user_id', $request->user()->id)
                                 ->first();
@@ -149,6 +156,11 @@ class SkinAnalysisController extends Controller
                 'success' => false,
                 'message' => 'Analysis not found',
             ], 404);
+        }
+
+        // احذف الصورة من الـ storage أيضاً
+        if ($analysis->image_path) {
+            Storage::disk('public')->delete($analysis->image_path);
         }
 
         $analysis->delete();
@@ -175,13 +187,11 @@ class SkinAnalysisController extends Controller
     )]
     public function compare(Request $request)
     {
-        // 1. التحقق من البيانات الواردة
         $request->validate([
             'before' => 'required|integer',
             'after'  => 'required|integer',
         ]);
 
-        // ── [تغيير 5] نتأكد إن التحليلين يرجعوا لليوزر الحالي ──
         $before = SkinAnalysis::where('id', $request->before)
                               ->where('user_id', $request->user()->id)
                               ->first();
