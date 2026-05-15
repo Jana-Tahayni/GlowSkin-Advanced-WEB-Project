@@ -8,8 +8,8 @@ import { formatDistanceToNow } from "date-fns";
 import Navbar      from "./modules/lujain/components/home/Navbar";
 import HomePage    from "./modules/lujain/pages/HomePage";
 import PaymentPage from "./modules/lujain/pages/PaymentPage";
-import "./modules/lujain/styles/global.css";  // ← الـ CSS الرئيسية للمشروع
-import "./App.css";                            // ← ثاني، بعده مباشرة
+import "./modules/lujain/styles/global.css";
+import "./App.css";
 
 // ── Jana: Skin Analysis pages ──
 import HeroSection     from "./components/HeroSection/HeroSection";
@@ -29,30 +29,24 @@ import GlowAuth, { VerifyEmailPage } from "./modules/auth/LoginForm";
 import GoogleCallbackPage             from "./modules/auth/GoogleCallbackPage";
 import ResetPasswordPage              from "./modules/auth/ResetPasswordPage";
 
+// ── همسة: Doctor Dashboard (router-based, layout مستقل) ──
+import HamsaNavbar    from "./modules/hamsa/components/HamsaNavbar";
+import Dashboard      from "./modules/hamsa/pages/Dashboard";
+import PendingCases   from "./modules/hamsa/pages/PendingCases";
+import CaseReview     from "./modules/hamsa/pages/CaseReview";
+import RoutineBuilder from "./modules/hamsa/pages/RoutineBuilder";
+import RoutineDisplay from "./modules/hamsa/pages/RoutineDisplay";
+import "./modules/hamsa/hamsa.css";
+
 // ─────────────────────────────────────────────
 //  Product page hero styles (حلا)
 // ─────────────────────────────────────────────
 const productHeroStyles = `
-  .product-page h1 {
-    font-size: clamp(2.4rem, 4vw, 3.8rem) !important;
-    letter-spacing: normal !important; margin: 0 0 1.2rem !important;
-    font-family: 'Cormorant Garamond', serif !important; font-weight: 400 !important;
-  }
-  .product-page h2 {
-    font-size: 1.9rem !important; letter-spacing: normal !important;
-    margin: 0 0 1.8rem !important;
-    font-family: 'Cormorant Garamond', serif !important; font-weight: 400 !important;
-  }
+  .product-page h1 { font-size: clamp(2.4rem, 4vw, 3.8rem) !important; letter-spacing: normal !important; margin: 0 0 1.2rem !important; font-family: 'Cormorant Garamond', serif !important; font-weight: 400 !important; }
+  .product-page h2 { font-size: 1.9rem !important; letter-spacing: normal !important; margin: 0 0 1.8rem !important; font-family: 'Cormorant Garamond', serif !important; font-weight: 400 !important; }
   .product-page { text-align: left !important; font-family: 'Jost', sans-serif !important; font-size: 1rem !important; }
-  .product-hero {
-    padding: 0; position: relative; overflow: hidden;
-    min-height: 92vh; display: flex; align-items: center; background: #F7F2EE;
-  }
-  .product-hero-inner {
-    display: grid; grid-template-columns: 1.2fr 0.8fr;
-    align-items: center; width: 100%; max-width: 1200px;
-    margin: 0 auto; padding: 2rem 3rem; gap: 3rem;
-  }
+  .product-hero { padding: 0; position: relative; overflow: hidden; min-height: 92vh; display: flex; align-items: center; background: #F7F2EE; }
+  .product-hero-inner { display: grid; grid-template-columns: 1.2fr 0.8fr; align-items: center; width: 100%; max-width: 1200px; margin: 0 auto; padding: 2rem 3rem; gap: 3rem; }
   .product-hero-text { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
   .product-hero-eyebrow { font-size: .75rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: #3D8C80; margin-bottom: 1.2rem; }
   .product-hero-title { font-family: 'Cormorant Garamond', serif !important; font-size: clamp(2.4rem, 4vw, 3.8rem) !important; line-height: 1.1; color: #3D2A1E; margin: 0 0 1.2rem !important; letter-spacing: normal !important; font-weight: 400 !important; }
@@ -63,32 +57,49 @@ const productHeroStyles = `
   .product-video-wrap { position: relative; border-radius: 24px; overflow: hidden; box-shadow: 0 12px 48px rgba(61,42,30,0.16); aspect-ratio: 4/5; max-height: 560px; }
   .product-video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .product-video-overlay { position: absolute; inset: 0; background: linear-gradient(160deg, transparent 50%, rgba(61,42,30,.18) 100%); border-radius: 24px; }
-  @media (max-width: 900px) {
-    .product-hero-inner { grid-template-columns: 1fr; text-align: center; padding: 4rem 1.5rem; }
-    .product-hero-text { align-items: center; order: 2; }
-    .product-video-wrap { order: 1; max-height: 300px; aspect-ratio: 16/9; }
-  }
+  @media (max-width: 900px) { .product-hero-inner { grid-template-columns: 1fr; text-align: center; padding: 4rem 1.5rem; } .product-hero-text { align-items: center; order: 2; } .product-video-wrap { order: 1; max-height: 300px; aspect-ratio: 16/9; } }
 `;
 
 const getToken = () => localStorage.getItem("token") || "";
+
+// ─────────────────────────────────────────────
+//  همسة: Doctor Dashboard — layout مستقل بـ sidebar خاصها
+// ─────────────────────────────────────────────
+function HamsaLayout() {
+  return (
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+      <HamsaNavbar />
+      <div style={{
+        marginLeft: "230px",
+        flex: 1,
+        padding: "32px 36px",
+        minHeight: "100vh",
+        background: "var(--light, #F5EDE0)"
+      }}>
+        <Routes>
+          <Route path="/"                element={<Dashboard />} />
+          <Route path="/cases"           element={<PendingCases />} />
+          <Route path="/review"          element={<CaseReview />} />
+          <Route path="/routine"         element={<RoutineBuilder />} />
+          <Route path="/routine/display" element={<RoutineDisplay />} />
+        </Routes>
+      </div>
+    </div>
+  );
+}
 
 // ─────────────────────────────────────────────
 //  Main App Shell — page-state navigation
 // ─────────────────────────────────────────────
 function AppShell() {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // ── Page state ──
   const [page, setPage] = useState("home");
 
   useEffect(() => { window.scrollTo(0, 0); }, [page]);
 
-  // ── Auth state ──
   const isLoggedIn = !!localStorage.getItem("token");
 
-  // ── Notifications (لجين) ──
-  const [notifications,    setNotifications]    = useState([]);
+  const [notifications,     setNotifications]     = useState([]);
   const [currentAnalysisId, setCurrentAnalysisId] = useState(null);
 
   const fetchNotifications = async () => {
@@ -108,9 +119,7 @@ function AppShell() {
         read:    n.read_at !== null,
       }));
       setNotifications(formatted);
-    } catch (err) {
-      console.error("Failed to load notifications", err);
-    }
+    } catch (err) { console.error("Failed to load notifications", err); }
   };
 
   const markAllAsRead = async () => {
@@ -136,13 +145,11 @@ function AppShell() {
     return () => clearInterval(interval);
   }, []);
 
-  // ── Jana: analysis complete → go to payment ──
   const handleConsult = (id) => {
     setCurrentAnalysisId(id);
     setPage("payment");
   };
 
-  // ── حلا: Product Analyzer state ──
   const [productLoading, setProductLoading] = useState(false);
   const [productResult,  setProductResult]  = useState(null);
   const [productSubPage, setProductSubPage] = useState("analyzer");
@@ -158,29 +165,11 @@ function AppShell() {
         formData.append("skin_type", skinType);
         const res  = await fetch("/api/product/image", { method: "POST", headers: authHeaders, body: formData });
         const data = await res.json();
-        setProductResult({
-          productName: data.product_name, imgPreview,
-          effectivenessScore: data.effectiveness_score, safetyScore: data.safety_score,
-          compatibilityScore: Math.round((data.effectiveness_score + data.safety_score) / 2),
-          overallScore: Math.round((data.effectiveness_score + data.safety_score) / 2),
-          compatibility: data.compatibility, ingredients: data.key_ingredients ?? [],
-          warnings: data.warnings ?? [], verdict: data.verdict,
-        });
+        setProductResult({ productName: data.product_name, imgPreview, effectivenessScore: data.effectiveness_score, safetyScore: data.safety_score, compatibilityScore: Math.round((data.effectiveness_score + data.safety_score) / 2), overallScore: Math.round((data.effectiveness_score + data.safety_score) / 2), compatibility: data.compatibility, ingredients: data.key_ingredients ?? [], warnings: data.warnings ?? [], verdict: data.verdict });
       } else {
-        const res  = await fetch("/api/product", {
-          method: "POST",
-          headers: { ...authHeaders, "Content-Type": "application/json" },
-          body: JSON.stringify({ product_name: productName, skin_type: skinType }),
-        });
+        const res  = await fetch("/api/product", { method: "POST", headers: { ...authHeaders, "Content-Type": "application/json" }, body: JSON.stringify({ product_name: productName, skin_type: skinType }) });
         const data = await res.json();
-        setProductResult({
-          productName: data.product_name, imgPreview: null,
-          effectivenessScore: data.effectiveness_score, safetyScore: data.safety_score,
-          compatibilityScore: Math.round((data.effectiveness_score + data.safety_score) / 2),
-          overallScore: Math.round((data.effectiveness_score + data.safety_score) / 2),
-          compatibility: data.compatibility, ingredients: data.key_ingredients ?? [],
-          warnings: data.warnings ?? [], verdict: data.verdict,
-        });
+        setProductResult({ productName: data.product_name, imgPreview: null, effectivenessScore: data.effectiveness_score, safetyScore: data.safety_score, compatibilityScore: Math.round((data.effectiveness_score + data.safety_score) / 2), overallScore: Math.round((data.effectiveness_score + data.safety_score) / 2), compatibility: data.compatibility, ingredients: data.key_ingredients ?? [], warnings: data.warnings ?? [], verdict: data.verdict });
       }
     } catch (err) { console.error(err); }
     finally { setProductLoading(false); }
@@ -189,7 +178,6 @@ function AppShell() {
   return (
     <div className="app-container">
 
-      {/* ── Navbar تبع لجين — الـ navbar الرئيسية ── */}
       <Navbar
         active={page}
         setPage={setPage}
@@ -202,29 +190,16 @@ function AppShell() {
       />
 
       <main>
+        {page === "home"     && <HomePage setPage={setPage} />}
 
-        {/* ── لجين: Home Page ── */}
-        {page === "home" && <HomePage setPage={setPage} />}
-
-        {/* ── لجين: Payment / Pricing ── */}
-        {page === "payment" && (
-          <PaymentPage
-            setPage={setPage}
-            analysisId={currentAnalysisId}
-            refreshNotifs={fetchNotifications}
-            addNotification={addNotification}
-          />
+        {page === "payment"  && (
+          <PaymentPage setPage={setPage} analysisId={currentAnalysisId} refreshNotifs={fetchNotifications} addNotification={addNotification} />
         )}
 
-        {/* ── Jana: Skin Analysis ── */}
         {page === "analysis" && (
           <>
             <HeroSection />
-            <UploadPage
-              onHistoryClick={() => setPage("analysis-history")}
-              onCompareClick={() => setPage("analysis-compare")}
-              onConsult={handleConsult}
-            />
+            <UploadPage onHistoryClick={() => setPage("analysis-history")} onCompareClick={() => setPage("analysis-compare")} onConsult={handleConsult} />
           </>
         )}
 
@@ -240,15 +215,11 @@ function AppShell() {
           </div></div>
         )}
 
-        {/* ── حلا: Product Analyzer ── */}
         {page === "product" && (
           <div className="product-page">
             <style>{productHeroStyles}</style>
             {productSubPage === "history" ? (
-              <ProductHistoryPage
-                onBack={() => setProductSubPage("analyzer")}
-                authHeaders={{ Authorization: `Bearer ${getToken()}`, Accept: "application/json" }}
-              />
+              <ProductHistoryPage onBack={() => setProductSubPage("analyzer")} authHeaders={{ Authorization: `Bearer ${getToken()}`, Accept: "application/json" }} />
             ) : (
               <>
                 <section className="product-hero">
@@ -256,10 +227,7 @@ function AppShell() {
                     <div className="product-hero-text">
                       <p className="product-hero-eyebrow">AI-Powered · Ingredient Intelligence</p>
                       <h1 className="product-hero-title">Analyze Your<br /><em>Skincare Product</em></h1>
-                      <p className="product-hero-sub">
-                        Paste a product name or upload an ingredient label. Our AI matches it
-                        to your skin profile and surfaces what truly matters — in seconds.
-                      </p>
+                      <p className="product-hero-sub">Paste a product name or upload an ingredient label. Our AI matches it to your skin profile and surfaces what truly matters — in seconds.</p>
                       <div style={{ display: "flex", gap: "1rem", flexDirection: "column" }}>
                         <a href="#analyzer-form" className="product-hero-cta">✦ Start Analyzing</a>
                         <button className="product-hero-cta" onClick={() => setProductSubPage("history")}>🕐 History</button>
@@ -275,10 +243,7 @@ function AppShell() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "1.8rem" }}>
                     <div id="analyzer-form">
                       <ProductForm onAnalyze={handleProductAnalyze} loading={productLoading} />
-                      {productResult && (
-                        <button className="btn btn-outline" style={{ marginTop: "1rem", width: "100%" }}
-                          onClick={() => setProductResult(null)}>↺ New Analysis</button>
-                      )}
+                      {productResult && <button className="btn btn-outline" style={{ marginTop: "1rem", width: "100%" }} onClick={() => setProductResult(null)}>↺ New Analysis</button>}
                     </div>
                     {productResult && <ResultsCard result={productResult} />}
                   </div>
@@ -287,15 +252,13 @@ function AppShell() {
             )}
           </div>
         )}
-
       </main>
-
     </div>
   );
 }
 
 // ─────────────────────────────────────────────
-//  Root — BrowserRouter يلف كل شي
+//  Root
 // ─────────────────────────────────────────────
 export default function App() {
   return (
@@ -308,7 +271,10 @@ export default function App() {
         <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
         <Route path="/verify/:token"         element={<VerifyEmailPage />} />
 
-        {/* ── كل باقي الصفحات ── */}
+        {/* ── همسة: Doctor Dashboard — /doctor/* ── */}
+        <Route path="/doctor/*" element={<HamsaLayout />} />
+
+        {/* ── كل باقي الصفحات (لجين + Jana + حلا) ── */}
         <Route path="/*" element={<AppShell />} />
       </Routes>
     </BrowserRouter>
