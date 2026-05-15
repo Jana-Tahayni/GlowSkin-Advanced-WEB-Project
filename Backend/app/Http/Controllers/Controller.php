@@ -1,9 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-// use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-// use Illuminate\Foundation\Validation\ValidatesRequests;
-// use Illuminate\Routing\Controller as BaseController;
 
 use OpenApi\Attributes as OA;
 
@@ -13,9 +10,9 @@ use OpenApi\Attributes as OA;
     securityScheme: "bearerAuth",
     type: "http",
     scheme: "bearer",
-    bearerFormat: "Token"   
+    bearerFormat: "Token"
 )]
 abstract class Controller
 {
-   
+    //
 }
