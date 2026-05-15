@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 require('./bootstrap');
+=======
+import './bootstrap';
+>>>>>>> 37f97714f9b44b9de397c935f5c19e95e97c4db5

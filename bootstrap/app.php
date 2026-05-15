@@ -1,5 +1,6 @@
 <?php
 
+<<<<<<< HEAD
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -53,3 +54,29 @@ $app->singleton(
 */
 
 return $app;
+=======
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware): void {
+        //
+    })
+    ->withExceptions(function (Exceptions $exceptions): void {
+        
+   
+    $exceptions->shouldRenderJsonWhen(function ($request, $e) {
+        return $request->is('api/*');
+
+}) ;
+
+
+    })->create();
+>>>>>>> 37f97714f9b44b9de397c935f5c19e95e97c4db5

@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
  
 namespace Database\Seeders;
  
@@ -89,5 +90,29 @@ class DatabaseSeeder extends Seeder
                 }
             }
         }
+=======
+
+namespace Database\Seeders;
+
+use App\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    use WithoutModelEvents;
+
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        // User::factory(10)->create();
+
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
+>>>>>>> 37f97714f9b44b9de397c935f5c19e95e97c4db5
     }
 }

@@ -14,6 +14,7 @@ return [
     |
     */
 
+<<<<<<< HEAD
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
@@ -22,6 +23,14 @@ return [
 
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
+=======
+    'postmark' => [
+        'key' => env('POSTMARK_API_KEY'),
+    ],
+
+    'resend' => [
+        'key' => env('RESEND_API_KEY'),
+>>>>>>> 37f97714f9b44b9de397c935f5c19e95e97c4db5
     ],
 
     'ses' => [
@@ -30,4 +39,19 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+<<<<<<< HEAD
+=======
+    'slack' => [
+        'notifications' => [
+            'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
+            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
+        ],
+    ],
+    'google' => [
+        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect'      => env('GOOGLE_REDIRECT_URI', 'http://localhost:8000/api/auth/google/callback'),
+    ],
+
+>>>>>>> 37f97714f9b44b9de397c935f5c19e95e97c4db5
 ];
