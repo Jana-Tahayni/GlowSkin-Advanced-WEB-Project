@@ -16,6 +16,7 @@ class SkinAnalysis extends Model
      * بدون هذا، Laravel يرفض يحفظ البيانات
      */
     protected $fillable = [
+        'user_id', 
         'overall_score',
         'skin_type',
         'summary',
