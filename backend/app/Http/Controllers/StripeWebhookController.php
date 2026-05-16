@@ -11,27 +11,37 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\NewCaseReceived;
 use App\Models\User;
-// class StripeWebhookController extends Controller
-// {
-//     //
-// public function handleWebhook(Request $request) {
-//     $payload = $request->all();
-//     $type = $payload['type'];
+use Illuminate\Support\Facades\Auth;
+use OpenApi\Attributes as OA;
 
-//     if ($type === 'payment_intent.succeeded') {
-//         $intent = $payload['data']['object'];
-        
-//         Payment::where('stripe_id', $intent['id'])->update([
-//             'status' => 'paid',
-//             'paid_at' => now(),
-//         ]);
-//     }
-
-//     return response()->json(['status' => 'success']);
-// }
-// }
 class StripeWebhookController extends Controller
 {
+    #[OA\Post(
+        path: "/api/stripe/webhook",
+        summary: "Stripe Webhook Listener",
+        description: "Handles incoming events from Stripe, such as successful payments, and triggers notifications.",
+        tags: ["Payments"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Webhook handled successfully",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "status", type: "string", example: "success")
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: "Invalid payload or signature",
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: "error", type: "string", example: "Invalid signature")
+                    ]
+                )
+            )
+        ]
+    )]
     public function handleWebhook(Request $request)
     {
         $payload = $request->getContent();
@@ -55,7 +65,7 @@ class StripeWebhookController extends Controller
         if ($event->type === 'payment_intent.succeeded') {
             $intent = $event->data->object;
 
-            $analysisId = $intent->metadata->analysis_id ?? 123;
+            $analysisId = $intent->metadata->analysis_id;
             $payment = Payment::where('stripe_id', $intent->id)->first();
 
             if ($payment) {

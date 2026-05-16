@@ -149,7 +149,7 @@ return [
              *
              * @see \OpenApi\scan
              */
-            'pattern' => '*.php',
+            'pattern' => null,
 
             /*
              * Absolute path to directories that should be excluded from scanning
