@@ -37,6 +37,18 @@ import CaseReview     from "./modules/hamsa/pages/CaseReview";
 import RoutineBuilder from "./modules/hamsa/pages/RoutineBuilder";
 import RoutineDisplay from "./modules/hamsa/pages/RoutineDisplay";
 
+// ── Admin Dashboard ──
+import AdminRoute     from "./components/AdminRoute";
+import AdminLayout    from "./components/Layout";
+import AdminDashboard from "./pages/Dashboard";
+import Users          from "./pages/Users";
+import UserProfile    from "./pages/UserProfile";
+import Doctors        from "./pages/Doctors";
+import DoctorProfile  from "./pages/DoctorProfile";
+import AddDoctor      from "./pages/AddDoctor";
+import Transactions   from "./pages/Transactions";
+import AdminProfile   from "./pages/AdminProfile";
+
 // ─────────────────────────────────────────────
 //  Product page hero styles (حلا)
 // ─────────────────────────────────────────────
@@ -108,6 +120,10 @@ function AppShell() {
     const role     = userRaw ? JSON.parse(userRaw)?.role : null;
     if (role === "doctor") {
       navigate("/doctor");
+      return;
+    }
+    if (role === "admin") {
+      navigate("/admin");
       return;
     }
     const redirect = sessionStorage.getItem("redirectAfterLogin");
@@ -291,6 +307,18 @@ export default function App() {
 
         {/* ── همسة: Doctor Dashboard — /doctor/* ── */}
         <Route path="/doctor/*" element={<HamsaLayout />} />
+
+        {/* ── Admin Dashboard — /admin/* ── */}
+        <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<Users />} />
+          <Route path="users/:id" element={<UserProfile />} />
+          <Route path="doctors" element={<Doctors />} />
+          <Route path="doctors/:id" element={<DoctorProfile />} />
+          <Route path="doctors/add" element={<AddDoctor />} />
+          <Route path="transactions" element={<Transactions />} />
+          <Route path="admin-profile" element={<AdminProfile />} />
+        </Route>
 
         {/* ── كل باقي الصفحات (لجين + Jana + حلا) ── */}
         <Route path="/*" element={<AppShell />} />

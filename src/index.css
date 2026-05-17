@@ -2,6 +2,39 @@
    index.css — Reset عام بسيط فقط
    لا CSS variables هنا، كل module عنده variables خاصة
    ═══════════════════════════════════════════ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #EDE4DA;
+  color: #3D2A1E;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #EDE4DA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C8B8A2;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8B6450;
+}
 
 *, *::before, *::after {
   box-sizing: border-box;

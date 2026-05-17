@@ -475,9 +475,17 @@ function LoginForm({ onSwitch, onSwitchWithEmail }) {
     e.preventDefault(); setAlert(null); setLoading(true);
     try {
       const { data: { data: { access_token, user } } } = await api.post("/auth/login", { email: form.email, password: form.password });
-      localStorage.setItem("token", access_token);
-      localStorage.setItem("user",  JSON.stringify(user));
-      navigate("/analyzer");
+localStorage.setItem("token", access_token);
+localStorage.setItem("user",  JSON.stringify(user));
+
+
+if (user.role === "admin") {
+  navigate("/admin");
+} else if (user.role === "doctor") {
+  navigate("/doctor");
+} else {
+  navigate("/analyzer");
+}
     } catch (err) {
       const data = err.response?.data; const status = err.response?.status;
       if (status === 404 && data?.action === "register")
@@ -666,11 +674,13 @@ export function VerifyEmailPage() {
     (async () => {
       try {
         const { data } = await api.get(`/auth/verify/${token}`);
-        if (data.data?.access_token) {
-          localStorage.setItem("token", data.data.access_token);
-          localStorage.setItem("user",  JSON.stringify(data.data.user));
-        }
-        setStatus("success"); setMessage(data.message);
+     
+if (data.data?.access_token) {
+  localStorage.setItem("token", data.data.access_token);
+  localStorage.setItem("user",  JSON.stringify(data.data.user));
+}
+setStatus("success"); 
+setMessage(data.message);
       } catch (err) {
         const data = err.response?.data; const status = err.response?.status;
         if (status === 410) {
@@ -704,7 +714,16 @@ export function VerifyEmailPage() {
           <div className="gs-confirm-icon">{cfg[status]?.icon}</div>
           <p className="gs-confirm-title">{cfg[status]?.title}</p>
           <p className="gs-confirm-body">{message || "Please wait…"}</p>
-          {status === "success" && <button className="gs-btn" onClick={() => navigate("/analyzer")}>Go to Dashboard</button>}
+         {status === "success" && (
+  <button className="gs-btn" onClick={() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.role === "admin") navigate("/admin");
+    else if (user?.role === "doctor") navigate("/doctor");
+    else navigate("/analyzer");
+  }}>
+    Go to Dashboard
+  </button>
+)}
           {(status === "expired" || status === "invalid") && <button className="gs-btn" onClick={() => navigate("/auth")}>Register Again</button>}
           {status === "resent" && <button className="gs-btn" onClick={() => navigate("/auth")}>Back to Sign In</button>}
         </div>
