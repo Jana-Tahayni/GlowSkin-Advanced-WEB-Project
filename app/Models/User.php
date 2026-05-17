@@ -49,4 +49,18 @@ class User extends Authenticatable
     {
         return $this->provider !== 'email';
     }
+    public function skinAnalyses()
+{
+    return $this->hasMany(\App\Models\SkinAnalysis::class);
+}
+
+public function productChecks()
+{
+    return $this->hasMany(\App\Models\ProductCheck::class);
+}
+
+public function routines()
+{
+    return $this->hasMany(\App\Models\Routine::class);
+}
 }

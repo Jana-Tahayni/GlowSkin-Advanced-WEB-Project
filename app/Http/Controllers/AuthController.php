@@ -22,9 +22,7 @@ use Illuminate\Support\Facades\DB;
 #[OA\SecurityScheme(securityScheme: "bearerAuth", type: "http", scheme: "bearer", bearerFormat: "Passport")]
 class AuthController extends Controller
 {
-    // =========================================================
-    //  REGISTRATION  (step 1 – save to pending, send email)
-    // =========================================================
+   
 
     #[OA\Post(
         path: "/api/auth/register",
@@ -70,7 +68,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // ── Guard: email already fully registered ──
+     
         if (User::where('email', $request->email)->exists()) {
             return response()->json([
                 'success' => false,
@@ -79,10 +77,10 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // ── Guard: pending record exists ──
+     
         $existing = PendingUser::where('email', $request->email)->first();
         if ($existing) {
-            // Resend a fresh token rather than creating a duplicate
+       
             $this->refreshPendingToken($existing);
 
             return response()->json([
@@ -92,7 +90,6 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // ── Create pending record ──
         $token   = Str::random(64);
         $pending = PendingUser::create([
             'first_name'         => $request->first_name,
@@ -111,9 +108,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // =========================================================
-    //  EMAIL VERIFICATION  (step 2 – user clicks link)
-    // =========================================================
+   
 
     #[OA\Get(
         path: "/api/auth/verify/{token}",
@@ -130,7 +125,7 @@ class AuthController extends Controller
     {
         $pending = PendingUser::where('verification_token', $token)->first();
 
-        // ── Token not found at all ──
+
         if (!$pending) {
             return response()->json([
                 'success' => false,
@@ -138,7 +133,7 @@ class AuthController extends Controller
             ], 404);
         }
 
-        // ── Older than 24 hours → delete permanently ──
+       
         if ($pending->isOlderThan24Hours()) {
             $pending->delete();
 
@@ -148,7 +143,7 @@ class AuthController extends Controller
             ], 410);
         }
 
-        // ── Token expired but within 24 hours → send a fresh link ──
+     
         if ($pending->isTokenExpired()) {
             $this->refreshPendingToken($pending);
 
@@ -158,7 +153,7 @@ class AuthController extends Controller
             ], 410);
         }
 
-        // ── Token is valid → promote to real user ──
+ 
         $user = User::create([
             'first_name'        => $pending->first_name,
             'last_name'         => $pending->last_name,
@@ -183,9 +178,6 @@ class AuthController extends Controller
         ]);
     }
 
-    // =========================================================
-    //  RESEND VERIFICATION
-    // =========================================================
 
     #[OA\Post(
         path: "/api/auth/resend-verification",
@@ -211,7 +203,7 @@ class AuthController extends Controller
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        // Already verified?
+      
         if (User::where('email', $request->email)->exists()) {
             return response()->json([
                 'success' => false,
@@ -228,7 +220,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        // If older than 24 h, wipe it — user must start over
+        
         if ($pending->isOlderThan24Hours()) {
             $pending->delete();
 
@@ -246,9 +238,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // =========================================================
-    //  LOGIN
-    // =========================================================
+  
 
     #[OA\Post(
         path: "/api/auth/login",
@@ -281,17 +271,17 @@ class AuthController extends Controller
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        // ── Email is stuck in pending ──
+  
         if (PendingUser::where('email', $request->email)->exists()) {
             return response()->json([
                 'success'      => false,
                 'message'      => 'This email is not yet verified. Please check your email or request a new verification link.',
-                'action'       => 'resend_verification',   // hint for the frontend
+                'action'       => 'resend_verification', 
                 'email'        => $request->email,
             ], 403);
         }
 
-        // ── Email not in either table ──
+   
         if (!User::where('email', $request->email)->exists()) {
             return response()->json([
                 'success' => false,
@@ -301,7 +291,7 @@ class AuthController extends Controller
             ], 404);
         }
 
-        // ── Attempt authentication ──
+ 
         if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             return response()->json([
                 'success' => false,
@@ -323,9 +313,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // =========================================================
-    //  GOOGLE OAUTH
-    // =========================================================
+    
 
     #[OA\Get(path: "/api/auth/google", summary: "Get Google OAuth redirect URL", tags: ["Auth"],
         responses: [new OA\Response(response: 200, description: "Redirect URL returned")])]
@@ -354,14 +342,14 @@ class AuthController extends Controller
     try {
         $googleUser = Socialite::driver('google')->stateless()->user();
     } catch (\Exception $e) {
-        // ✅ Consistent — all redirects go to /auth/google/callback
+       
         return redirect("{$frontendUrl}/auth/google/callback?error=google_failed");
     }
 
     $email = $googleUser->getEmail();
 
     if (PendingUser::where('email', $email)->exists()) {
-        // ✅ Consistent
+       
         return redirect("{$frontendUrl}/auth/google/callback?error=pending_verification&email={$email}");
     }
 
@@ -387,66 +375,7 @@ class AuthController extends Controller
 
     return redirect("{$frontendUrl}/auth/google/callback?token={$token}&new=" . ($isNew ? '1' : '0'));
 }
-   /* public function handleGoogleCallback(Request $request): JsonResponse
-    {
-        try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Google authentication failed. Please try again.',
-            ], 400);
-        }
-
-        $email = $googleUser->getEmail();
-
-        // ── Email is stuck in pending ──
-        if (PendingUser::where('email', $email)->exists()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An account with this email is waiting for email verification. Please verify your email or request a new verification link.',
-                'action'  => 'resend_verification',
-                'email'   => $email,
-            ], 403);
-        }
-
-        // ── Parse name ──
-        $nameParts = explode(' ', trim($googleUser->getName()), 2);
-        $firstName = $nameParts[0] ?? '';
-        $lastName  = $nameParts[1] ?? '';
-
-        // ── Existing user → login; new user → create ──
-        $isNew = !User::where('email', $email)->exists();
-
-        $user = User::updateOrCreate(
-            ['email' => $email],
-            [
-                'first_name'        => $firstName,
-                'last_name'         => $lastName,
-                'provider'          => 'google',
-                'provider_id'       => $googleUser->getId(),
-                'avatar'            => $googleUser->getAvatar(),
-                'password'          => Hash::make(Str::random(32)),
-                'email_verified_at' => now(),
-            ]
-        );
-
-        $token = $user->createToken('GlowApp Google Token')->accessToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => $isNew ? 'Account created via Google. Welcome!' : 'Welcome back.',
-            'data'    => [
-                'user'         => $this->formatUser($user),
-                'access_token' => $token,
-                'token_type'   => 'Bearer',
-            ],
-        ]);
-    }*/
-
-    // =========================================================
-    //  ME / LOGOUT
-    // =========================================================
+   
 
     #[OA\Get(path: "/api/auth/me", summary: "Get authenticated user", tags: ["Auth"],
         security: [["bearerAuth" => []]],
@@ -466,13 +395,7 @@ class AuthController extends Controller
         return response()->json(['success' => true, 'message' => 'Logged out successfully.']);
     }
 
-    // =========================================================
-    //  PRIVATE HELPERS
-    // =========================================================
-
-    /**
-     * Generate a new token, push the expiry to +15 min, and re-send the email.
-     */
+   
     private function refreshPendingToken(PendingUser $pending): void
     {
         $newToken = Str::random(64);
@@ -494,12 +417,10 @@ class AuthController extends Controller
             'email'      => $user->email,
             'avatar'     => $user->avatar,
             'provider'   => $user->provider,
+            'role'       => $user->role,
             'created_at' => $user->created_at,
         ];
     }
-    // =========================================================
-//  FORGOT PASSWORD  (send reset link)
-// =========================================================
 
 #[OA\Post(
     path: "/api/auth/forgot-password",
@@ -525,11 +446,10 @@ public function forgotPassword(Request $request): JsonResponse
         return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
     }
 
-    // Always return success to avoid email enumeration
     $user = User::where('email', $request->email)->first();
 
     if ($user) {
-        // Delete any existing token for this email
+       
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
         $token = Str::random(64);
@@ -551,9 +471,6 @@ public function forgotPassword(Request $request): JsonResponse
     ]);
 }
 
-// =========================================================
-//  RESET PASSWORD  (submit new password)
-// =========================================================
 
 #[OA\Post(
     path: "/api/auth/reset-password",
@@ -595,7 +512,7 @@ public function resetPassword(Request $request): JsonResponse
         ->where('email', $request->email)
         ->first();
 
-    // Invalid token
+   
     if (!$record || !Hash::check($request->token, $record->token)) {
         return response()->json([
             'success' => false,
@@ -603,7 +520,7 @@ public function resetPassword(Request $request): JsonResponse
         ], 400);
     }
 
-    // Expired (60 minutes)
+ 
     if (now()->diffInMinutes($record->created_at) > 60) {
         DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
@@ -621,10 +538,10 @@ public function resetPassword(Request $request): JsonResponse
 
     $user->update(['password' => Hash::make($request->password)]);
 
-    // Delete the token so it can't be reused
+ 
     DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
-    // Revoke all existing tokens (force re-login)
+ 
     $user->tokens()->delete();
 
     return response()->json([
@@ -632,4 +549,12 @@ public function resetPassword(Request $request): JsonResponse
         'message' => 'Password reset successfully. Please log in with your new password.',
     ]);
 }
+public function redirectToGoogle2(): \Illuminate\Http\RedirectResponse
+{
+    return Socialite::driver('google')
+        ->scopes(['openid', 'profile', 'email'])
+        ->stateless()
+        ->redirect();
+}
+
 }

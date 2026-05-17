@@ -7,12 +7,9 @@ use App\Http\Controllers\SkinAnalysisController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\NotificationController;
-
-/*
-|--------------------------------------------------------------------------
-| Auth Routes
-|--------------------------------------------------------------------------
-*/
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AdminProfileController;
+use App\Http\Controllers\Admin\DashboardController;
 Route::prefix('auth')->group(function () {
     Route::post('register',              [AuthController::class, 'register']);
     Route::post('login',                 [AuthController::class, 'login']);
@@ -22,10 +19,23 @@ Route::prefix('auth')->group(function () {
     Route::get('google/callback',        [AuthController::class, 'handleGoogleCallback']);
     Route::post('forgot-password',       [AuthController::class, 'forgotPassword']);
     Route::post('reset-password',        [AuthController::class, 'resetPassword']);
+    Route::get('google/redirect', [AuthController::class, 'redirectToGoogle2']);
     Route::middleware('auth:api')->group(function () {
         Route::get('me',      [AuthController::class, 'me']);
         Route::post('logout', [AuthController::class, 'logout']);
+      
     });
+});
+Route::middleware('auth:api')->group(function () {
+    Route::get('/admin/users',      [UserController::class, 'index']);
+    Route::get('/admin/users/{user}', [UserController::class, 'show']);
+  
+    Route::delete('/admin/users/{user}', [UserController::class, 'destroy']);
+    Route::get('/admin/dashboard', [DashboardController::class, 'index']);
+   
+Route::get('/admin/profile',          [AdminProfileController::class, 'show']);
+Route::put('/admin/profile',          [AdminProfileController::class, 'update']);
+Route::put('/admin/profile/password', [AdminProfileController::class, 'updatePassword']);
 });
 
 /*
