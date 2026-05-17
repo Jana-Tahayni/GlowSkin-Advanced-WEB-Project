@@ -3,6 +3,7 @@ import { STATS, FEATURES } from "../data/data";
 import Footer from "../components/home/Footer";
 import { FAQ_DATA } from "../data/FAQ";
 import "./HomePage.css";
+import HomeStatsSection from '../components/home/Stats';
 
 function HeroVisual() {
   return (
@@ -53,16 +54,7 @@ function HomePage({ setPage, navigate }) {
       </div>
 
       {/* Stats */}
-      <div className="stats-bar">
-        <div className="stats-inner">
-          {STATS.map(s => (
-            <div key={s.label}>
-              <div className="stat-val">{s.value}</div>
-              <div className="stat-label">{s.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <HomeStatsSection />
 
       {/* Features */}
       <div className="section">
@@ -92,25 +84,7 @@ function HomePage({ setPage, navigate }) {
         </div>
       </div>
 
-      {/* Testimonials */}
-      <div className="section">
-        <div className="section-eyebrow">Testimonials</div>
-        <h2 className="section-title">Loved by thousands of users.</h2>
-        <div className="testi-grid">
-          {TESTIMONIALS?.map(t => (
-            <div key={t.name} className="testi-card">
-              <p className="testi-text">"{t.text}"</p>
-              <div className="testi-author">
-                <div className="t-avatar">{t.initials}</div>
-                <div>
-                  <div className="t-name">{t.name}</div>
-                  <div className="t-role">Verified User</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+
 
       {/* FAQ */}
       <div id="faq-section" className="section faq-section">
