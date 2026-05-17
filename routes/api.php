@@ -10,6 +10,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PublicStatsController;
 Route::prefix('auth')->group(function () {
     Route::post('register',              [AuthController::class, 'register']);
     Route::post('login',                 [AuthController::class, 'login']);
@@ -77,3 +78,5 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/notifications/{id}/read',  [NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all',   [NotificationController::class, 'markAllRead']);
 });
+
+Route::get('/home-stats', [PublicStatsController::class, 'getHomeStats']);
