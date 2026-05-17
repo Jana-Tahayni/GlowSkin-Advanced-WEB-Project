@@ -59,7 +59,7 @@ class PaymentController extends Controller
         $analysisId = $request->analysis_id;
 
         $alreadyPaid = \App\Models\Payment::where('analysis_id', $analysisId)
-             ->where('status', 'paid')
+             ->where('status',  ['paid', 'pending'])
             ->exists();
 
         if ($alreadyPaid) {
