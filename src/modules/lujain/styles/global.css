@@ -35,49 +35,6 @@
   min-height: 100vh;
 }
 
-/* ── NAV ── */
-.lujain-scope .nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(247,242,238,0.93);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--lj-border);
-  padding: 0 2rem;
-}
-.lujain-scope .nav-inner {
-  max-width: 1200px; margin: 0 auto;
-  display: flex; align-items: center; gap: 1.5rem; height: 66px;
-}
-.lujain-scope .logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.55rem; font-weight: 600; letter-spacing: 0.04em;
-  color: var(--lj-dark-teal); text-decoration: none; flex-shrink: 0;
-  display: flex; align-items: center; gap: 0.35rem;
-}
-.lujain-scope .logo-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--lj-sage-teal); display: inline-block; margin-bottom: 2px;
-}
-.lujain-scope .nav-links {
-  display: flex; gap: 0.15rem; list-style: none; flex: 1;
-  overflow-x: auto; scrollbar-width: none;
-}
-.lujain-scope .nav-links::-webkit-scrollbar { display: none; }
-.lujain-scope .nav-link {
-  padding: 0.4rem 0.85rem; border-radius: 40px;
-  font-size: 0.82rem; font-weight: 400; letter-spacing: 0.02em;
-  color: var(--lj-dark-teal); cursor: pointer; white-space: nowrap;
-  border: none; background: none; font-family: 'Jost', sans-serif;
-  transition: all 0.2s;
-}
-.lujain-scope .nav-link:hover {
-  color: var(--lj-deep-teal); background: var(--lj-nude-linen);
-}
-.lujain-scope .nav-link.active {
-  color: var(--lj-deep-teal); background: rgba(90,173,160,0.14); font-weight: 500;
-}
-.lujain-scope .nav-actions {
-  display: flex; align-items: center; gap: 0.625rem; flex-shrink: 0;
-}
 
 /* ── BUTTONS ── */
 .lujain-scope .btn {
@@ -259,6 +216,7 @@
 .lujain-scope .stat-label {
   font-size: 0.77rem; color: rgba(247,242,238,0.65); letter-spacing: 0.05em; text-transform: uppercase;
 }
+
 /* ── SECTIONS ── */
 .lujain-scope .section { max-width: 1200px; margin: 0 auto; padding: 5rem 2rem; }
 .lujain-scope .section-eyebrow {
@@ -572,6 +530,4 @@
   .lujain-scope .testi-grid { grid-template-columns: 1fr; }
   .lujain-scope .steps { grid-template-columns: 1fr; }
   .lujain-scope .nav-links { display: none; }
- 
-  
 }

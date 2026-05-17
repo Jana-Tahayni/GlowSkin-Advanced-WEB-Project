@@ -23,7 +23,7 @@ const CHECKLIST = [
   { id: 4, label: "Preparing your results..."   },
 ];
 
-export default function UploadPage({ onHistoryClick }) {
+export default function UploadPage({ onHistoryClick, onConsult }) {
   const [step, setStep]                 = useState(1);
   const [imageData, setImageData]       = useState(null);
   const [skinType, setSkinType]         = useState(null);
@@ -102,6 +102,7 @@ export default function UploadPage({ onHistoryClick }) {
     setResults(null);
     setError(null);
   };
+ 
 
   return (
     <div id="analyzer" className="page-bg">
@@ -190,6 +191,7 @@ export default function UploadPage({ onHistoryClick }) {
               skinType={skinType}
               results={results}
               onReset={handleReset}
+              onConsult={onConsult}
             />
           )}
         </div>

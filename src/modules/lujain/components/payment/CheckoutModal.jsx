@@ -57,23 +57,41 @@ const CheckoutModal = ({ onClose, amount = 29, analysisId }) => {
     setLoading(false);
   } else {
     
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/process-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          payment_method_id: paymentMethod.id,
-          // TODO: Replace with user.email after linking Auth Context
-          email: form.email, 
-          // email: user.email,
-          name: form.name,
-          analysis_id: analysis_id,  
-        }),
-      });
+    // try {
+    //   const response = await fetch('http://127.0.0.1:8000/api/process-payment', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Accept': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       payment_method_id: paymentMethod.id,
+    //       // TODO: Replace with user.email after linking Auth Context
+    //       email: form.email, 
+    //       // email: user.email,
+    //       name: form.name,
+    //       analysis_id: analysis_id,  
+    //     }),
+    //   });
 
+
+    const token = localStorage.getItem("token");
+
+try {
+  const response = await fetch('http://127.0.0.1:8000/api/process-payment', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      payment_method_id: paymentMethod.id,
+      email: form.email,
+      name: form.name,
+      analysis_id: analysis_id,
+    }),
+  });
       const result = await response.json();
 
       if (result.success) {

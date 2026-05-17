@@ -180,6 +180,7 @@ function AppShell() {
   }, []);
 
   const handleConsult = (id) => {
+    console.log("ANALYSIS ID:", id);
     setCurrentAnalysisId(id);
     setPage("payment");
   };

@@ -80,7 +80,7 @@ function MetricBar({ metric }) {
   );
 }
 
-export default function ResultsPage({ imageData, skinType, onReset, results: rawResults }) {
+export default function ResultsPage({ imageData, skinType, onReset, results: rawResults, onConsult }) {
   const results = normalizeResults(rawResults);
   const [copied, setCopied]       = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -96,10 +96,12 @@ export default function ResultsPage({ imageData, skinType, onReset, results: raw
   const handleSavePDF = () => window.print();
 
   // ── [تغيير] كبسة Consult ترسل الـ analysis_id للجين ──
-  const handleConsult = () => {
-    const analysisId = rawResults?.id;
-    window.location.href = `/payment?analysis_id=${analysisId}`;
-  };
+
+  //TODO lujain
+  // const handleConsult = () => {
+  //   const analysisId = rawResults?.id;
+  //   window.location.href = `/payment?analysis_id=${analysisId}`;
+  // };
 
   const handleCopyLink = async () => {
     const text = `🌿 GlowSkin Analysis Results
@@ -206,7 +208,7 @@ Analyzed by GlowSkin AI`;
           Get personalised product recommendations and a detailed skin care routine from a certified dermatologist.
         </p>
         {/* ── [تغيير] أضفنا onClick يمرر الـ analysis_id لصفحة لجين ── */}
-        <button className="consult-btn" onClick={handleConsult}>
+        <button type="button" className="consult-btn" onClick={() => onConsult(rawResults?.id)}>
           Consult a Specialist →
         </button>
       </div>
