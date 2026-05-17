@@ -126,6 +126,9 @@ class SkinAnalysisController extends Controller
             'concerns'      => $results['concerns'],
             'image_path'    => $fileName, // ✅ محفوظ هلق
         ]);
+        $request->user()->update([
+            'skin_type' => $results['skin_type'],
+        ]);
 
         return response()->json([
             'success' => true,
