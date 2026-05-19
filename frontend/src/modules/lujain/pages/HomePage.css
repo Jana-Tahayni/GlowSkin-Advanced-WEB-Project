@@ -1,0 +1,106 @@
+
+/* ── FAQ ── */
+.lujain-scope .faq-section {
+  background-color: var(--warm-white);
+  padding-bottom: 5rem;
+}
+
+.lujain-scope .faq-list {
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+.lujain-scope .faq-item {
+  background: var(--ivory);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+.lujain-scope .faq-item summary {
+  font-weight: 600;
+  color: var(--dark-teal);
+  cursor: pointer;
+  list-style: none;
+  outline: none;
+}
+
+.lujain-scope .faq-answer {
+  margin-top: 1rem;
+  color: var(--mocha);
+  line-height: 1.6;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.lujain-scope .faq-item[open] {
+  border-color: var(--sage-teal);
+  box-shadow: var(--shadow);
+}
+
+/* ── HERO VISUAL ── */
+.lujain-scope .hero-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lujain-scope .scanner-container {
+  position: relative;
+  width: 380px;
+  height: 450px;
+  border-radius: 40px;
+  overflow: hidden;
+  border: 8px solid var(--ivory);
+  box-shadow: var(--shadow);
+}
+
+.lujain-scope .main-scan-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* unified scan line (removed gold + duplication) */
+.lujain-scope .scan-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--sage-teal);
+  box-shadow: 0 0 15px rgba(90, 173, 160, 0.5);
+  animation: lj-scan-hp 3s infinite linear;
+  z-index: 3;
+}
+
+@keyframes lj-scan-hp {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+.lujain-scope .analysis-tag {
+  position: absolute;
+  background: rgba(247, 242, 238, 0.92);
+  backdrop-filter: blur(5px);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--dark-teal);
+  box-shadow: var(--shadow);
+  z-index: 4;
+  animation: lj-float-hp 4s infinite ease-in-out;
+}
+
+.lujain-scope .tag-1 { top: 20%; right: -20px; animation-delay: 0s; }
+.lujain-scope .tag-2 { bottom: 30%; left: -30px; animation-delay: 1s; }
+.lujain-scope .tag-3 { top: 50%; left: -10px; animation-delay: 2s; }
+
+@keyframes lj-float-hp {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}

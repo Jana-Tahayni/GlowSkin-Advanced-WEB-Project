@@ -1,0 +1,67 @@
+.skin-type-section label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #3D2A1E;
+  margin-bottom: 0.75rem;
+}
+
+.skin-type-section label svg {
+  display: inline;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+}
+
+.skin-type-optional {
+  font-weight: 400;
+  color: #8B6450;
+}
+
+.skin-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .skin-type-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.skin-type-btn {
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 2px solid #DDD0C0;
+  background: #F7F2EE;
+  color: #8B6450;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+}
+
+.skin-type-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(61, 140, 128, 0.25);
+  border-color: #5AADA0;
+  background: #EDE4DA;
+}
+
+.skin-type-btn.selected {
+  background: linear-gradient(135deg, #3D8C80 0%, #2A6B62 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 8px 25px -5px rgba(61, 140, 128, 0.45);
+}
+
+.skin-type-btn.col-span-2 {
+  grid-column: span 2;
+}
+
+@media (min-width: 640px) {
+  .skin-type-btn.col-span-2 {
+    grid-column: span 1;
+  }
+}

@@ -1,0 +1,122 @@
+.lujain-scope .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 50, 46, 0.6); /* Teal-Espresso overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: var(--warm-white);
+  background: #F7F2EE;
+  padding: 2.5rem;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(30, 80, 72, 0.15);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--espresso);
+}
+
+.modal-header h2 {
+  color: var(--espresso);
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.modal-sub {
+  color: var(--deep-teal);
+  text-align: center;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.order-box {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+
+.order-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  color: var(--espresso);
+}
+
+.stripe-input-wrapper {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+/* .pay-submit-btn {
+  width: 100%;
+  background: var(--deep-teal);
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.pay-submit-btn:hover:not(:disabled) {
+  background: var(--espresso);
+  transform: translateY(-2px);
+} */
+
+.pay-submit-btn {
+  background: var(--lj-deep-teal);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 0.9rem 1.4rem;
+  width: 100%;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.lujain-scope .pay-submit-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.pay-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--mocha);
+  margin-top: 15px;
+}
+
+.payment-error {
+  color: #d64545; /* Red refined for the palette */
+  font-size: 0.85rem;
+  margin-top: 10px;
+  text-align: center;
+}
